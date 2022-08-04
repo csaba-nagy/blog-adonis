@@ -3,5 +3,6 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
-  "remoteUser": "node"
+  "remoteUser": "node",
+  "postCreateCommand": "pnpm install"
 }
