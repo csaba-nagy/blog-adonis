@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: 16
+    volumes:
+      - ..:/workspace:cached
+    env_file: ../.env
+    command: sleep infinity
