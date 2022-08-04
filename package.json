@@ -2,11 +2,18 @@
   "name": "blog-adonis",
   "version": "0.0.1",
   "description": "Experimental blog project for learning purposes",
+  "author": "Csaba Nagy",
+  "license": "MIT",
+  "keywords": [],
   "main": "index.js",
   "scripts": {
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "Csaba Nagy",
-  "license": "MIT"
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.25.2",
+    "eslint": "^8.21.0",
+    "typescript": "^4.7.4"
+  }
 }
