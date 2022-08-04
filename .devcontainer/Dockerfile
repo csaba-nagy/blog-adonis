@@ -9,3 +9,11 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 # [Optional] Uncomment if you want to install an additional version of node using nvm
 # ARG EXTRA_NODE_VERSION=10
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
+
+ARG USER=node
+USER ${USER}
+
+RUN npm install -g \
+  pnpm
+
+RUN pnpm config set store-dir /home/${USER}/.pnpm-store

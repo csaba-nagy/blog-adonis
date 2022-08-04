@@ -1,0 +1,12 @@
+{
+  "name": "blog-adonis",
+  "version": "0.0.1",
+  "description": "Experimental blog project for learning purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Csaba Nagy",
+  "license": "MIT"
+}
