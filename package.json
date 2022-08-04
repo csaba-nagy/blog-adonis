@@ -9,6 +9,7 @@
   "scripts": {
     "lint:fix": "eslint . --fix",
     "lint": "eslint .",
+    "start:server": "cd packages/server && pnpm dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
