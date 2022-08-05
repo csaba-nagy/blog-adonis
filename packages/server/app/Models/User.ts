@@ -2,11 +2,9 @@ import type { DateTime } from 'luxon'
 import type { HasMany, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import { BaseModel, column, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import type { UserRole, UserStatus } from '../Enums'
-import UserProfile from './UserProfile'
-import Post from './Post'
-import Comment from './Comment'
+import { Comment, Post, UserProfile } from '.'
 
-export default class User extends BaseModel {
+export class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
