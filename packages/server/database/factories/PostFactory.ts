@@ -1,6 +1,6 @@
 import Factory from '@ioc:Adonis/Lucid/Factory'
-import { Post } from '../../app/Models'
-import { PostCategory } from '../../app/Enums'
+import { Post } from 'App/Models'
+import { PostCategory } from 'App/Enums'
 
 export default Factory.define(Post, ({ faker }) => {
   return {

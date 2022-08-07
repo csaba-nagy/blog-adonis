@@ -1,7 +1,7 @@
 import type { DateTime } from 'luxon'
 import type { BelongsTo, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { BaseModel, belongsTo, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import type { PostCategory, PostState } from '../Enums'
+import type { PostCategory, PostState } from 'App/Enums'
 import { Asset, User } from '.'
 
 export class Post extends BaseModel {

@@ -1,5 +1,5 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
-import { PostCategory, PostState } from '../../app/Enums'
+import { PostCategory, PostState } from 'App/Enums'
 
 export default class extends BaseSchema {
   protected tableName = 'posts'
