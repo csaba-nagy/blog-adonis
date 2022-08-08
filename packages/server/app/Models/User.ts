@@ -6,6 +6,8 @@ import type { UserRole, UserStatus } from 'App/Enums'
 import { Comment, Post, UserProfile } from '.'
 
 export class User extends BaseModel {
+  public static table = 'users'
+
   @column({ isPrimary: true })
   public id: number
 
@@ -18,7 +20,7 @@ export class User extends BaseModel {
   @column()
   public email: string
 
-  @column()
+  @column({ serializeAs: null })
   public password: string
 
   @column()
