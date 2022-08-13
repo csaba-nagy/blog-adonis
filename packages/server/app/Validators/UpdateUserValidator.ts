@@ -40,7 +40,7 @@ export class UpdateUserValidator {
       rules.unique({ table: 'users', column: 'email' }),
       rules.maxLength(100),
     ]),
-    password: schema.string({}, [
+    password: schema.string.nullableAndOptional({}, [
       rules.minLength(8),
     ]),
   })

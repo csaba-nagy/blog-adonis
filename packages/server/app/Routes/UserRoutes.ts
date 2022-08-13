@@ -7,7 +7,7 @@ const usersController = new UsersController()
 const API_BASE_ROUTE = Env.get('API_BASE_ROUTE')
 const API_VERSION = Env.get('API_VERSION')
 
-const userApiEndPoints = {
+export const userApiEndPoints = {
   home: '/users',
   profile: '/users/:id',
 }
