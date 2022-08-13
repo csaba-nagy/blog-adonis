@@ -2,10 +2,12 @@ import type { DateTime } from 'luxon'
 import type { HasMany, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import { BaseModel, beforeSave, column, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
-import type { UserRole, UserStatus } from '../Enums'
+import type { UserRole, UserStatus } from 'App/Enums'
 import { Comment, Post, UserProfile } from '.'
 
 export class User extends BaseModel {
+  public static table = 'users'
+
   @column({ isPrimary: true })
   public id: number
 
@@ -18,7 +20,7 @@ export class User extends BaseModel {
   @column()
   public email: string
 
-  @column()
+  @column({ serializeAs: null })
   public password: string
 
   @column()

@@ -20,6 +20,7 @@
 
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import Route from '@ioc:Adonis/Core/Route'
+import 'App/Routes'
 
 // check db connection
 Route.get('health', async ({ response }) => {

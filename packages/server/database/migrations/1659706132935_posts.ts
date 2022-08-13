@@ -1,5 +1,5 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
-import { PostCategory, PostState } from '../../app/Enums'
+import { PostCategory, PostState } from 'App/Enums'
 
 export default class extends BaseSchema {
   protected tableName = 'posts'
@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.string('title', 100).notNullable()
       table.string('slug', 100).notNullable()
       table.enum('category', Object.values(PostCategory)).notNullable()
-      table.integer('author_id').references('id').inTable('users').unsigned().notNullable()
+      table.integer('author_id').references('id').inTable('users').unsigned().nullable().onDelete('SET NULL')
       table.text('description').notNullable()
       table.text('meta_description').nullable()
       table.text('body').notNullable()

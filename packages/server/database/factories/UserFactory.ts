@@ -1,6 +1,6 @@
 import Factory from '@ioc:Adonis/Lucid/Factory'
-import { UserRole, UserStatus } from '../../app/Enums'
-import { User } from '../../app/Models'
+import { UserRole, UserStatus } from 'App/Enums'
+import { User } from 'App/Models'
 import PostFactory from './PostFactory'
 import UserProfileFactory from './UserProfileFactory'
 
