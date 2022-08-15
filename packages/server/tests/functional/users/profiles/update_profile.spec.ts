@@ -15,7 +15,7 @@ test.group('Update user profile', (group) => {
     }
 
     const preUpdateData = await client.get(USER_PROFILE_PATH_WITH_ID)
-    const { updated_at } = await preUpdateData.body()
+    const { updated_at } = preUpdateData.body()
 
     const response = await client.patch(USER_PROFILE_PATH_WITH_ID).json(updateProfileData)
 
