@@ -14,7 +14,8 @@ test.group('Update user', (group) => {
       lastName: 'Testing',
     }
 
-    const { updated_at } = await (await client.get(USER_PATH_WITH_ID)).body()
+    const preUpdateData = await client.get(USER_PATH_WITH_ID)
+    const { updated_at } = preUpdateData.body()
 
     const response = await client.patch(USER_PATH_WITH_ID).json(updatedUserData)
 
