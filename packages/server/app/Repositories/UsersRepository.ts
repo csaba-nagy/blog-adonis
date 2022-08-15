@@ -22,19 +22,23 @@ export class UsersRepository {
   }
 
   public async updateUser(userData) {
-    // TODO: Use transaction
-    const user = await User.findByOrFail('id', userData.id)
+    const updatedUser = await Database.transaction(async (trx) => {
+      const user = await User.findByOrFail('id', userData.id, { client: trx })
 
-    const updatedUser = await user.merge({
-      ...userData,
-    }).save()
+      const updatedUserData = await user.merge({
+        ...userData,
+      }).save()
+
+      return updatedUserData
+    })
 
     return updatedUser
   }
 
   public async deleteUser(id: number) {
-    // TODO: Use transaction
-    const user = await User.findByOrFail('id', id)
-    await user.delete()
+    await Database.transaction(async (trx) => {
+      const user = await User.findByOrFail('id', id, { client: trx })
+      await user.delete()
+    })
   }
 }
