@@ -15,6 +15,7 @@ importers:
   packages/server:
     specifiers:
       '@adonisjs/assembler': ^5.8.1
+      '@adonisjs/auth': ^8.2.2
       '@adonisjs/core': ^5.8.5
       '@adonisjs/lucid': ^18.1.0
       '@adonisjs/redis': ^7.3.1
@@ -33,6 +34,7 @@ importers:
       youch: ^3.2.0
       youch-terminal: ^2.1.4
     dependencies:
+      '@adonisjs/auth': 8.2.2_74alu4wtacn4qtcwyp5os2dxp4
       '@adonisjs/core': 5.8.5
       '@adonisjs/lucid': 18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y
       '@adonisjs/redis': 7.3.1_@adonisjs+core@5.8.5
@@ -108,6 +110,34 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@adonisjs/auth/8.2.2_74alu4wtacn4qtcwyp5os2dxp4:
+    resolution: {integrity: sha512-XCfZhe6pm2ImeADr3IquzjDJfwmQxuh2d27AdTfEKvMfpDHVHMnFOFBizfz18Z1Nas/Gl7Lw00CsrnpCLNswmA==}
+    peerDependencies:
+      '@adonisjs/core': ^5.7.1
+      '@adonisjs/i18n': ^1.5.0
+      '@adonisjs/lucid': ^18.0.0
+      '@adonisjs/redis': ^7.2.0
+      '@adonisjs/session': ^6.2.0
+    peerDependenciesMeta:
+      '@adonisjs/i18n':
+        optional: true
+      '@adonisjs/lucid':
+        optional: true
+      '@adonisjs/redis':
+        optional: true
+      '@adonisjs/session':
+        optional: true
+    dependencies:
+      '@adonisjs/core': 5.8.5
+      '@adonisjs/lucid': 18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y
+      '@adonisjs/redis': 7.3.1_@adonisjs+core@5.8.5
+      '@poppinss/hooks': 5.0.3_dcp26hjfxbju2etdd3namxtgxu
+      '@poppinss/utils': 4.0.4
+      luxon: 2.5.0
+    transitivePeerDependencies:
+      - '@adonisjs/application'
+    dev: false
 
   /@adonisjs/bodyparser/8.1.6_i5xyddv3gvfvdmbrjmampe2cku:
     resolution: {integrity: sha512-8OyQO4BeIKK+xJSH1YdSZVTllTsq0uTHcZw4a/7eShXKaVT0z8/IupIG2uymVpPPSfu+3kbN9ueipqFsvz9MpA==}

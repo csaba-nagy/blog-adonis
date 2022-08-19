@@ -13,6 +13,7 @@
     "db:setup": "node ace migration:refresh --seed"
   },
   "dependencies": {
+    "@adonisjs/auth": "^8.2.2",
     "@adonisjs/core": "^5.8.5",
     "@adonisjs/lucid": "^18.1.0",
     "@adonisjs/redis": "^7.3.1",
