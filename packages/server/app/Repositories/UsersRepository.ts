@@ -6,8 +6,13 @@ export class UsersRepository {
     return await User.all()
   }
 
+  // TODO: Maybe a getUserByKey method is more appropriate than separate methods
   public async getUserById(id: number) {
     return await User.findByOrFail('id', id)
+  }
+
+  public async getUserByEmail(email: string) {
+    return await User.findByOrFail('email', email)
   }
 
   public async createUser(userData) {
