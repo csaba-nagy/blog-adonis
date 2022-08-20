@@ -1,5 +1,5 @@
-import { GuardsList } from '@ioc:Adonis/Addons/Auth'
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { GuardsList } from '@ioc:Adonis/Addons/Auth'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 
 /**
@@ -32,7 +32,7 @@ export default class AuthMiddleware {
      */
     let guardLastAttempted: string | undefined
 
-    for (let guard of guards) {
+    for (const guard of guards) {
       guardLastAttempted = guard
 
       if (await auth.use(guard).check()) {
@@ -60,10 +60,10 @@ export default class AuthMiddleware {
   /**
    * Handle request
    */
-  public async handle (
+  public async handle(
     { auth }: HttpContextContract,
     next: () => Promise<void>,
-    customGuards: (keyof GuardsList)[]
+    customGuards: (keyof GuardsList)[],
   ) {
     /**
      * Uses the user defined guards or the default guard mentioned in

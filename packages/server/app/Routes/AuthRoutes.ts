@@ -14,6 +14,6 @@ export const authApiEndPoints = {
 export const authRoutes = Route.group(() => {
   Route.group(() => {
     Route[RequestMethods.POST](authApiEndPoints.login, authController.login)
-    Route[RequestMethods.GET](authApiEndPoints.logout, authController.logout)
+    Route[RequestMethods.GET](authApiEndPoints.logout, authController.logout).middleware('auth:api')
   }).prefix(API_VERSION)
 }).prefix(API_BASE_ROUTE)

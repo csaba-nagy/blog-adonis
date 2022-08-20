@@ -8,13 +8,14 @@ const API_BASE_ROUTE = Env.get('API_BASE_ROUTE')
 const API_VERSION = Env.get('API_VERSION')
 
 export const userProfilesApiEndpoints = {
-  home: '/users/profile',
-  profile: '/users/profile/:id',
+  home: '/profile',
+  profileById: '/profile/:id',
 }
 
 export const userProfileRoutes = Route.group(() => {
   Route.group(() => {
-    Route[RequestMethods.GET](userProfilesApiEndpoints.profile, userProfileController.getUserProfileById)
-    Route[RequestMethods.PATCH](userProfilesApiEndpoints.profile, userProfileController.updateUserProfile)
-  }).prefix(API_VERSION)
+    Route[RequestMethods.GET](userProfilesApiEndpoints.home, userProfileController.getOwnUserProfile)
+    Route[RequestMethods.GET](userProfilesApiEndpoints.profileById, userProfileController.getUserProfileById)
+    Route[RequestMethods.PATCH](userProfilesApiEndpoints.home, userProfileController.updateUserProfile)
+  }).prefix(API_VERSION).middleware('auth')
 }).prefix(API_BASE_ROUTE)
