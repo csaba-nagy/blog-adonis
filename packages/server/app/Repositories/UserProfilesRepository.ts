@@ -6,9 +6,11 @@ export class UserProfilesRepository {
     return await UserProfile.findByOrFail('user_id', userId)
   }
 
-  public async updateUserProfile(profileData) {
+  public async updateUserProfile(profileDataWithUserId) {
     const updatedProfile = await Database.transaction(async (trx) => {
-      const profile = await UserProfile.findByOrFail('user_id', profileData.userId, { client: trx })
+      const { userId: id, data: profileData } = profileDataWithUserId
+
+      const profile = await UserProfile.findByOrFail('user_id', id, { client: trx })
 
       const updatedProfile = await profile.merge({
         ...profileData,

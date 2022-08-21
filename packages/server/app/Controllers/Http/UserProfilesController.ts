@@ -23,8 +23,25 @@ export class UserProfilesController {
     const validatedData = await request.validate(UserProfileValidator)
     const payload = {
       userId: id,
-      ...validatedData,
+      data: {
+        ...validatedData,
+      },
     }
+    const updatedProfile = await new UserProfilesRepository().updateUserProfile(payload)
+
+    response.status(StatusCodes.OK).send(updatedProfile)
+  }
+
+  public async updateUserProfileById({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    const validatedData = await request.validate(UserProfileValidator)
+    const payload = {
+      userId: id,
+      data: {
+        ...validatedData,
+      },
+    }
+
     const updatedProfile = await new UserProfilesRepository().updateUserProfile(payload)
 
     response.status(StatusCodes.OK).send(updatedProfile)

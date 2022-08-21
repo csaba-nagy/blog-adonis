@@ -14,8 +14,12 @@ export const userProfilesApiEndpoints = {
 
 export const userProfileRoutes = Route.group(() => {
   Route.group(() => {
-    Route[RequestMethods.GET](userProfilesApiEndpoints.home, userProfileController.getOwnUserProfile)
+    // TODO: Admin only
     Route[RequestMethods.GET](userProfilesApiEndpoints.profileById, userProfileController.getUserProfileById)
+    Route[RequestMethods.PATCH](userProfilesApiEndpoints.profileById, userProfileController.updateUserProfileById)
+
+    // For users
+    Route[RequestMethods.GET](userProfilesApiEndpoints.home, userProfileController.getOwnUserProfile)
     Route[RequestMethods.PATCH](userProfilesApiEndpoints.home, userProfileController.updateUserProfile)
   }).prefix(API_VERSION).middleware('auth')
 }).prefix(API_BASE_ROUTE)
