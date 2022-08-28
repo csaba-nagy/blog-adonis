@@ -6,7 +6,7 @@ import Env from '@ioc:Adonis/Core/Env'
 const authController = new AuthController()
 const API_BASE_ROUTE = Env.get('API_BASE_ROUTE')
 const API_VERSION = Env.get('API_VERSION')
-const AUTH_PATH = '/auth'
+export const AUTH_PATH = '/auth'
 
 export const authApiEndPoints = {
   login: '/login',

@@ -26,13 +26,11 @@ export class CreateUserValidator {
    */
   public schema = schema.create({
     firstName: schema.string({}, [
-      rules.required(),
       rules.minLength(2),
       rules.maxLength(50),
       rules.alpha(),
     ]),
     lastName: schema.string({}, [
-      rules.required(),
       rules.minLength(2),
       rules.maxLength(50),
       rules.alpha(),
@@ -40,12 +38,10 @@ export class CreateUserValidator {
     email: schema.string({}, [
       rules.email(),
       rules.unique({ table: 'users', column: 'email' }),
-      rules.required(),
       rules.maxLength(100),
     ]),
     password: schema.string({}, [
       rules.minLength(8),
-      rules.required(),
     ]),
   })
 
@@ -60,5 +56,11 @@ export class CreateUserValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'firstName.required': 'First name is required',
+    'lastName.required': 'Last name is required',
+    'email.required': 'Email address is required',
+    'password.required': 'Password is required',
+    'email.unique': 'Invalid email address',
+  }
 }

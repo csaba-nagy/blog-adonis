@@ -8,7 +8,7 @@ const API_BASE_ROUTE = Env.get('API_BASE_ROUTE')
 const API_VERSION = Env.get('API_VERSION')
 
 export const userApiEndPoints = {
-  home: '/users',
+  users: '/users',
   account: '/account',
   userById: '/users/:id',
 }
@@ -27,13 +27,13 @@ export const userApiEndPoints = {
 export const userRoutes = Route.group(() => {
   Route.group(() => {
     // TODO:Admin only
-    Route[RequestMethods.GET](userApiEndPoints.home, usersController.getAllUsers).middleware('auth')
+    Route[RequestMethods.GET](userApiEndPoints.users, usersController.getAllUsers).middleware('auth')
     Route[RequestMethods.GET](userApiEndPoints.userById, usersController.getUserById).middleware('auth')
     Route[RequestMethods.PATCH](userApiEndPoints.userById, usersController.updateUser).middleware('auth')
     Route[RequestMethods.DELETE](userApiEndPoints.userById, usersController.deleteUser).middleware('auth')
 
     // For users
-    Route[RequestMethods.POST](userApiEndPoints.home, usersController.createNewUser)
+    Route[RequestMethods.POST](userApiEndPoints.users, usersController.createNewUser)
     Route[RequestMethods.GET](userApiEndPoints.account, usersController.getUserAccount).middleware('auth')
     Route[RequestMethods.PATCH](userApiEndPoints.account, usersController.updateUserOwnData).middleware('auth')
     Route[RequestMethods.DELETE](userApiEndPoints.account, usersController.deleteUserByItself).middleware('auth')

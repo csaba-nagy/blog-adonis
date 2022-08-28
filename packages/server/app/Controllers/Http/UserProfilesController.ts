@@ -9,7 +9,7 @@ export class UserProfilesController {
     const user = await auth.user!
     const profile = await new UserProfilesRepository().getUserProfile(user.id)
 
-    return response.status(StatusCodes.OK).send({ userData: user, profileData: profile })
+    return response.status(StatusCodes.OK).send(profile)
   }
 
   public async getUserProfileById({ request, response }: HttpContextContract) {
