@@ -52,3 +52,14 @@ export class User extends BaseModel {
       user.password = await Hash.make(user.password)
   }
 }
+
+/*
+|-------------------------------------------------------------------------------
+| Why need to export default User?
+|-------------------------------------------------------------------------------
+|
+| https://github.com/adonisjs/core/discussions/3229
+| "The user model need to have a export default
+| or you need to fix the config file to return User class."
+*/
+export default User

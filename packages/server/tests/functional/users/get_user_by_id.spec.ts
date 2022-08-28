@@ -1,26 +1,59 @@
 import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes } from 'App/Enums'
-import { DB_CONNECTION, TEST_USER_ID, USER_PATH_WITH_ID } from './constantsForTesting'
+import { string } from '@ioc:Adonis/Core/Helpers'
+import { User } from 'App/Models'
+import { DB_CONNECTION, TEST_USER_ID, USERS_PATH, USER_PATH_WITH_ID } from '../constantsForTesting'
 
-test.group('Get user by id', (group) => {
+test.group('GET /users/:id', (group) => {
   group.each.setup(async () => {
     await Database.beginGlobalTransaction(DB_CONNECTION)
     return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
   })
 
-  test('GET /users/:id', async ({ client, assert }) => {
-    const response = await client.get(USER_PATH_WITH_ID)
+  test('it should return a valid user account if the user is authenticated',
+    async ({ client, assert }) => {
+      const user = await User.findOrFail(TEST_USER_ID)
 
-    // Expected Status Code is 200
-    response.assertStatus(StatusCodes.OK)
+      const requiredUserProperties = Object
+        .getOwnPropertyNames(user.$attributes)
+        .filter(prop => prop !== 'password') // 👈 We do not need the password property
+        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
 
-    // Need to return the following props: id, firstName, lastName, email, role, status, createdAt, updatedAt
-    assert.properties(response.body(), ['id', 'first_name', 'last_name', 'email', 'role', 'status', 'created_at', 'updated_at'])
+      const response = await client
+        .get(USER_PATH_WITH_ID)
+        .guard('api')
+        .loginAs(user)
 
-    // Returning the password is not allowed
-    assert.notProperty(response.body(), 'password')
+      response.assertStatus(StatusCodes.OK)
 
-    assert.propertyVal(response.body(), 'id', TEST_USER_ID)
-  })
+      assert.properties(response.body(), requiredUserProperties)
+
+      assert.notProperty(response.body(), 'password')
+
+      assert.propertyVal(response.body(), 'id', TEST_USER_ID)
+    })
+
+  test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
+    async ({ client, assert }) => {
+      const response = await client.get(USER_PATH_WITH_ID)
+
+      response.assertStatus(StatusCodes.UNAUTHORIZED)
+
+      assert.properties(response.body(), ['errors'])
+      assert.exists(response.body().errors[0].message)
+    })
+
+  test('it should return error (404 NOT_FOUND) if the given id is invalid',
+    async ({ client }) => {
+      const user = await User.findOrFail(TEST_USER_ID)
+      const invalidId = 99999
+      const response = await client
+        .get(`${USERS_PATH}/${invalidId}`)
+        .guard('api')
+        .loginAs(user)
+
+      response.assertStatus(StatusCodes.NOT_FOUND)
+      response.assertTextIncludes('NOT_FOUND')
+    })
 })
