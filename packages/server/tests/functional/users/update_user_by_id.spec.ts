@@ -2,6 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
+import { string } from '@ioc:Adonis/Core/Helpers'
 import { DB_CONNECTION, TEST_USER_ID, USERS_PATH, USER_PATH_WITH_ID } from '../constantsForTesting'
 
 test.group('PATCH /users/:id', (group) => {
@@ -13,6 +14,10 @@ test.group('PATCH /users/:id', (group) => {
   test('it should update user data if the user is authenticated',
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_USER_ID)
+
+      const userProperties = Object.getOwnPropertyNames(user.$attributes)
+        .filter(prop => prop !== 'password') // 👈 We do not need the password property
+        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
 
       const payload = {
         firstName: 'John',
@@ -36,7 +41,7 @@ test.group('PATCH /users/:id', (group) => {
       assert.notPropertyVal(response.body(), 'updated_at', updated_at)
       assert.properties(
         response.body(),
-        ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at'],
+        userProperties,
       )
 
       assert.notProperty(response.body(), 'password')
