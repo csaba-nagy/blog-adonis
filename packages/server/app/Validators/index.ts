@@ -1,4 +1,5 @@
 export * from './CreateUserValidator'
 export * from './UpdateUserValidator'
+export * from './UpdateUserAsAdminValidator'
 export * from './UserProfileValidator'
 export * from './AuthValidator'

@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { UsersRepository } from 'App/Repositories'
-import { CreateUserValidator, UpdateUserValidator } from 'App/Validators'
+import { CreateUserValidator, UpdateUserAsAdminValidator, UpdateUserValidator } from 'App/Validators'
 import { StatusCodes } from 'App/Enums'
 
 export class UsersController {
@@ -32,7 +32,7 @@ export class UsersController {
   }
 
   public async updateUser({ request, response }: HttpContextContract) {
-    const validatedData = await request.validate(UpdateUserValidator)
+    const validatedData = await request.validate(UpdateUserAsAdminValidator)
     const payload = {
       id: request.param('id'),
       ...validatedData,
