@@ -3,25 +3,41 @@ import UserFactory from 'Database/factories/UserFactory'
 
 export default class extends BaseSeeder {
   public async run() {
-    await UserFactory
-    // Override the default values
-      .merge({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'johndoe@email.com',
-        password: 'password',
-      })
-      .apply('role')
-      .apply('status')
+    // It creates one admin account with the specified data
+    await UserFactory.merge({
+      // Override the default values what are declared in UserFactory
+      firstName: 'Csaba',
+      lastName: 'Nagy',
+      email: 'admin@email.com',
+      password: 'password',
+    })
+      .apply('role.admin')
+      .apply('status.active')
       .with('profile')
-      .with('posts', 10)
       .create()
 
+    // It creates some author accounts
+    await UserFactory
+      .apply('role.author')
+      .apply('status.active')
+      .with('profile')
+      .with('posts', 10)
+      .createMany(3)
+
+    // It creates some active user accounts
     await UserFactory
       // Apply the UserFactory state method
-      .apply('status')
-    // Set the given relation which is declared at UserFactory
+      .apply('status.active')
+    // Set the given relation which is declared in UserFactory
       .with('profile')
       .createMany(10)
+
+    // It creates some inactive (pending) user accounts
+    await UserFactory.with('profile').createMany(10)
+
+    // It creates some suspended user accounts
+    await UserFactory
+      .apply('status.suspended')
+      .with('profile').createMany(5)
   }
 }

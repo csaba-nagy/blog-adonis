@@ -14,8 +14,10 @@ export default Factory.define(User, ({ faker }) => {
 })
   // With state method, we can set the model properties
   // with custom values instead of the default
-  .state('status', user => user.status = UserStatus.ACTIVE)
-  .state('role', user => user.role = UserRole.AUTHOR)
+  .state('status.active', user => user.status = UserStatus.ACTIVE)
+  .state('status.suspended', user => user.status = UserStatus.SUSPENDED)
+  .state('role.admin', user => user.role = UserRole.ADMIN)
+  .state('role.author', user => user.role = UserRole.AUTHOR)
 
   // With relation method, we can set the relation between the models,
   // so when the factory method is executed the related factory method will be executed as well
