@@ -12,13 +12,17 @@ export class UsersController {
     response.status(StatusCodes.CREATED).send(user)
   }
 
-  public async getAllUsers({ response }) {
+  public async getAllUsers({ bouncer, response }: HttpContextContract) {
+    await bouncer.with('UserPolicy').authorize('getAllUsers')
+
     const users = await new UsersRepository().getUsers()
 
     response.status(StatusCodes.OK).send(users)
   }
 
-  public async getUserById({ request, response }: HttpContextContract) {
+  public async getUserById({ bouncer, request, response }: HttpContextContract) {
+    await bouncer.with('UserPolicy').authorize('getUserById')
+
     const user = await new UsersRepository().getUserById(request.param('id'))
 
     response.status(StatusCodes.OK).send(user)
@@ -31,7 +35,9 @@ export class UsersController {
     response.status(StatusCodes.OK).send(user)
   }
 
-  public async updateUser({ request, response }: HttpContextContract) {
+  public async updateUser({ bouncer, request, response }: HttpContextContract) {
+    await bouncer.with('UserPolicy').authorize('updateUserById')
+
     const validatedData = await request.validate(UpdateUserAsAdminValidator)
     const payload = {
       id: request.param('id'),
@@ -54,7 +60,9 @@ export class UsersController {
     response.status(StatusCodes.OK).send(updatedUser)
   }
 
-  public async deleteUser({ request, response }: HttpContextContract) {
+  public async deleteUser({ bouncer, request, response }: HttpContextContract) {
+    await bouncer.with('UserPolicy').authorize('deleteUserById')
+
     await new UsersRepository().deleteUser(request.param('id'))
 
     response.status(StatusCodes.OK)

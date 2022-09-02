@@ -5,21 +5,32 @@ import { UserProfilesRepository } from 'App/Repositories'
 import { UserProfileValidator } from 'App/Validators'
 
 export class UserProfilesController {
-  public async getOwnUserProfile({ auth, response }: HttpContextContract) {
-    const user = await auth.user!
-    const profile = await new UserProfilesRepository().getUserProfile(user.id)
+  public async getOwnUserProfile({ auth, bouncer, response }: HttpContextContract) {
+    const { id } = await auth.user!
+
+    const profile = await new UserProfilesRepository().getUserProfile(id)
+
+    await bouncer.with('UserProfilePolicy').authorize('viewOwnProfile', profile)
 
     return response.status(StatusCodes.OK).send(profile)
   }
 
-  public async getUserProfileById({ request, response }: HttpContextContract) {
+  public async getUserProfileById({ bouncer, request, response }: HttpContextContract) {
+    await bouncer.with('UserProfilePolicy').authorize('viewProfileById')
+
     const profile = await new UserProfilesRepository().getUserProfile(request.param('id'))
 
     response.status(StatusCodes.OK).send(profile)
   }
 
-  public async updateUserProfile({ auth, request, response }: HttpContextContract) {
-    const { id } = await auth.user!
+  public async updateUserProfile({ auth, bouncer, request, response }: HttpContextContract) {
+    const { id } = auth.user!
+
+    // It is necessary because of authorization
+    const profile = await new UserProfilesRepository().getUserProfile(id)
+
+    await bouncer.with('UserProfilePolicy').authorize('updateOwnProfile', profile)
+
     const validatedData = await request.validate(UserProfileValidator)
     const payload = {
       userId: id,
@@ -32,7 +43,9 @@ export class UserProfilesController {
     response.status(StatusCodes.OK).send(updatedProfile)
   }
 
-  public async updateUserProfileById({ request, response }: HttpContextContract) {
+  public async updateUserProfileById({ bouncer, request, response }: HttpContextContract) {
+    await bouncer.with('UserProfilePolicy').authorize('updateUserProfileById')
+
     const id = request.param('id')
     const validatedData = await request.validate(UserProfileValidator)
     const payload = {

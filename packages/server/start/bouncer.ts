@@ -20,9 +20,9 @@ import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 | as shown in the following example
 |
 | ```
-| 	Bouncer.define('deletePost', (user: User, post: Post) => {
-|			return post.user_id === user.id
-| 	})
+| Bouncer.define('deletePost', (user: User, post: Post) => {
+| return post.user_id === user.id
+| })
 | ```
 |
 |****************************************************************
@@ -44,14 +44,17 @@ export const { actions } = Bouncer
 | import the policy
 |
 | ```
-| 	Bouncer.registerPolicies({
-|			UserPolicy: () => import('App/Policies/User'),
-| 		PostPolicy: () => import('App/Policies/Post')
-| 	})
+| Bouncer.registerPolicies({
+| UserPolicy: () => import('App/Policies/User'),
+| PostPolicy: () => import('App/Policies/Post')
+| })
 | ```
 |
 |****************************************************************
 | NOTE: Always export the "policies" const from this file
 |****************************************************************
 */
-export const { policies } = Bouncer.registerPolicies({})
+export const { policies } = Bouncer.registerPolicies({
+  UserPolicy: () => import('App/Policies/UserPolicy'),
+  UserProfilePolicy: () => import('App/Policies/UserProfilePolicy'),
+})
