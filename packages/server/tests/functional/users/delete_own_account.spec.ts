@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { AUTH_LOGIN_PATH, DB_CONNECTION, TEST_USER_ID, USER_ACCOUNT_PATH } from '../constantsForTesting'
+import { AUTH_LOGIN_PATH, DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH } from '../../constantsForTests'
 
 test.group('DELETE /account', (group) => {
   group.each.setup(async () => {
@@ -12,7 +12,7 @@ test.group('DELETE /account', (group) => {
 
   test('it should delete the authenticated user account and profile',
     async ({ client }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
 
       const response = await client
         .delete(USER_ACCOUNT_PATH)

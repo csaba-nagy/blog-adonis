@@ -3,22 +3,22 @@ import type { User } from 'App/Models'
 import BasePolicy from 'App/Policies/BasePolicy'
 
 export default class UserPolicy extends BasePolicy {
-  public async getAllUsers(user: User) {
+  public getAllUsers(user: User) {
     if (user.role !== UserRole.ADMIN)
       return false
   }
 
-  public async getUserById(user: User) {
+  public getUserById(user: User) {
     if (user.role !== UserRole.ADMIN)
       return false
   }
 
-  public async updateUserById(user: User) {
+  public updateUserById(user: User) {
     if (user.role !== UserRole.ADMIN)
       return false
   }
 
-  public async deleteUserById(user: User) {
+  public deleteUserById(user: User) {
     if (user.role !== UserRole.ADMIN)
       return false
   }

@@ -5,10 +5,10 @@ import { User, UserProfile } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import {
   DB_CONNECTION,
-  TEST_USER_ID,
+  TEST_ADMIN_ID,
   USER_PROFILE_PATH,
   USER_PROFILE_PATH_WITH_ID,
-} from '../../constantsForTesting'
+} from '../../../constantsForTests'
 
 test.group('GET /profile/:id', (group) => {
   group.each.setup(async () => {
@@ -18,7 +18,7 @@ test.group('GET /profile/:id', (group) => {
 
   test('it should return a valid user profile if the user is authenticated',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
       const userProfile = await UserProfile.findByOrFail('user_id', user.id)
 
       // need to convert the given camelCase property names to snake_case
@@ -33,7 +33,7 @@ test.group('GET /profile/:id', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.propertyVal(response.body(), 'user_id', TEST_USER_ID)
+      assert.propertyVal(response.body(), 'user_id', TEST_ADMIN_ID)
       assert.properties(response.body(), userProfileProperties)
     })
 
@@ -49,7 +49,7 @@ test.group('GET /profile/:id', (group) => {
 
   test('it should return error (404 NOT FOUND), if the given id is invalid',
     async ({ client }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
       const response = await client
         .get(`${USER_PROFILE_PATH}/${invalidId}`)

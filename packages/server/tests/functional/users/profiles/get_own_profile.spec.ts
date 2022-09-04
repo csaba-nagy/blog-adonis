@@ -3,7 +3,7 @@ import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User, UserProfile } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
-import { DB_CONNECTION, TEST_USER_ID, USER_PROFILE_PATH } from '../../constantsForTesting'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH } from '../../../constantsForTests'
 
 test.group('GET /profile', (group) => {
   group.each.setup(async () => {
@@ -13,7 +13,7 @@ test.group('GET /profile', (group) => {
 
   test('it should return the authenticated user profile',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
       const userProfile = await UserProfile.findByOrFail('user_id', user.id)
 
       // need to convert the given camelCase property names to snake_case
@@ -28,7 +28,7 @@ test.group('GET /profile', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.propertyVal(response.body(), 'user_id', TEST_USER_ID)
+      assert.propertyVal(response.body(), 'user_id', TEST_ADMIN_ID)
       assert.properties(response.body(), userProfileProperties)
     })
 

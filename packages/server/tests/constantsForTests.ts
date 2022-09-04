@@ -6,12 +6,12 @@ const API_BASE_ROUTE = Env.get('API_BASE_ROUTE')
 const API_VERSION = Env.get('API_VERSION')
 const API_PATH = `${API_BASE_ROUTE}/${API_VERSION}`
 
-export const TEST_USER_ID = 1
+export const TEST_ADMIN_ID = 1
 export const USERS_PATH = `${API_PATH}${userApiEndPoints.users}`
 
 // Users & Profiles by ID
-export const USER_PATH_WITH_ID = `${USERS_PATH}/${TEST_USER_ID}`
-export const USER_PROFILE_PATH_WITH_ID = `${API_PATH}${userProfilesApiEndpoints.profile}/${TEST_USER_ID}`
+export const USER_PATH_WITH_ID = `${USERS_PATH}/${TEST_ADMIN_ID}`
+export const USER_PROFILE_PATH_WITH_ID = `${API_PATH}${userProfilesApiEndpoints.profile}/${TEST_ADMIN_ID}`
 
 // Users & Profiles
 export const USER_ACCOUNT_PATH = `${API_PATH}${userApiEndPoints.account}`
