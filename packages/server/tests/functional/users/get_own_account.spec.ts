@@ -3,7 +3,7 @@ import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
-import { DB_CONNECTION, TEST_USER_ID, USER_ACCOUNT_PATH } from '../constantsForTesting'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH } from '../../constantsForTests'
 
 test.group('GET /account', (group) => {
   group.each.setup(async () => {
@@ -13,7 +13,7 @@ test.group('GET /account', (group) => {
 
   test('it should return the authenticated user account',
     async ({ client, assert }) => {
-      const userToAuth = await User.findOrFail(TEST_USER_ID)
+      const userToAuth = await User.findOrFail(TEST_ADMIN_ID)
 
       const userProperties = Object
         .getOwnPropertyNames(userToAuth.$attributes)

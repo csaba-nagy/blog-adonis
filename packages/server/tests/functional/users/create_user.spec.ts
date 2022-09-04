@@ -2,7 +2,7 @@ import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_USER_ID, USERS_PATH, USER_PROFILE_PATH } from '../constantsForTesting'
+import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PROFILE_PATH } from '../../constantsForTests'
 
 test.group('POST /users', (group) => {
   group.each.setup(async () => {
@@ -32,7 +32,7 @@ test.group('POST /users', (group) => {
     const responseToGetCreatedProfile = await client
       .get(`${USER_PROFILE_PATH}/${id}`)
       .guard('api')
-      .loginAs(await User.findOrFail(TEST_USER_ID))
+      .loginAs(await User.findOrFail(TEST_ADMIN_ID))
 
     responseToGetCreatedProfile.assertStatus(StatusCodes.OK)
 
@@ -41,7 +41,7 @@ test.group('POST /users', (group) => {
 
   test('it should return error (422 UNPROCESSABLE_ENTITY) if the given email is already registered in the database',
     async ({ client, assert }) => {
-      const { email: emailInUse } = await User.findOrFail(TEST_USER_ID)
+      const { email: emailInUse } = await User.findOrFail(TEST_ADMIN_ID)
 
       const payload = {
         firstName: 'test',

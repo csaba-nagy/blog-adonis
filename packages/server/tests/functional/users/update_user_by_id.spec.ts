@@ -1,8 +1,10 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
-import { StatusCodes } from 'App/Enums'
+import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_USER_ID, USERS_PATH, USER_PATH_WITH_ID } from '../constantsForTesting'
+import { string } from '@ioc:Adonis/Core/Helpers'
+import UserFactory from 'Database/factories/UserFactory'
+import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PATH_WITH_ID } from '../../constantsForTests'
 
 test.group('PATCH /users/:id', (group) => {
   group.each.setup(async () => {
@@ -10,9 +12,13 @@ test.group('PATCH /users/:id', (group) => {
     return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
   })
 
-  test('it should update user data if the user is authenticated',
+  test('it should update a user data by if the request initiating user is an admin',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 TEST_USER is admin by default
+
+      const userProperties = Object.getOwnPropertyNames(user.$attributes)
+        .filter(prop => prop !== 'password') // 👈 We do not need the password property
+        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
 
       const payload = {
         firstName: 'John',
@@ -25,6 +31,9 @@ test.group('PATCH /users/:id', (group) => {
 
       const { updated_at } = preUpdateData.body()
 
+      // Only the admin users can fire this action
+      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
+
       const response = await client
         .patch(USER_PATH_WITH_ID)
         .json(payload)
@@ -36,7 +45,7 @@ test.group('PATCH /users/:id', (group) => {
       assert.notPropertyVal(response.body(), 'updated_at', updated_at)
       assert.properties(
         response.body(),
-        ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at'],
+        userProperties,
       )
 
       assert.notProperty(response.body(), 'password')
@@ -66,7 +75,7 @@ test.group('PATCH /users/:id', (group) => {
 
   test('it should return error (404 NOT_FOUND) if the given id is invalid',
     async ({ client }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
 
       const payload = {
@@ -84,7 +93,7 @@ test.group('PATCH /users/:id', (group) => {
 
   test('it should return validation error if some of the given data not valid',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
 
       const requiredUserProperties = ['firstName', 'lastName', 'email', 'password']
 
@@ -110,6 +119,30 @@ test.group('PATCH /users/:id', (group) => {
 
         assert.properties(response.body(), ['errors'])
         assert.exists(response.body().errors[0].message)
+      }
+    })
+  test('it should return error (403 FORBIDDEN) if the authenticated user is not authorized',
+    async ({ client, assert }) => {
+      const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
+
+      const { id } = await UserFactory.create()
+      const targetedUserPath = `${USERS_PATH}/${id}`
+
+      for (const userRole of unauthorizedUserRoles) {
+        // set the TEST_USER role to false value directly. NOTE: The TEST_USER is admin as default
+        const user = await User.updateOrCreate({ id: TEST_ADMIN_ID }, { role: userRole })
+
+        assert.propertyVal(user.$attributes, 'role', userRole)
+
+        const response = await client
+          .patch(targetedUserPath)
+          .json({}) // payload is not relevant in this case
+          .guard('api')
+          .loginAs(user)
+
+        response.assertStatus(StatusCodes.FORBIDDEN)
+
+        response.assertTextIncludes('Not authorized')
       }
     })
 })

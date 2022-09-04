@@ -16,6 +16,7 @@ importers:
     specifiers:
       '@adonisjs/assembler': ^5.8.1
       '@adonisjs/auth': ^8.2.2
+      '@adonisjs/bouncer': ^2.3.0
       '@adonisjs/core': ^5.8.5
       '@adonisjs/lucid': ^18.1.0
       '@adonisjs/redis': ^7.3.1
@@ -36,6 +37,7 @@ importers:
       youch-terminal: ^2.1.4
     dependencies:
       '@adonisjs/auth': 8.2.2_74alu4wtacn4qtcwyp5os2dxp4
+      '@adonisjs/bouncer': 2.3.0_jdf2byn5lje3xfh7lvnpj6atva
       '@adonisjs/core': 5.8.5
       '@adonisjs/lucid': 18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y
       '@adonisjs/redis': 7.3.1_@adonisjs+core@5.8.5
@@ -160,6 +162,23 @@ packages:
       fs-extra: 10.1.0
       media-typer: 1.1.0
       slash: 3.0.0
+
+  /@adonisjs/bouncer/2.3.0_jdf2byn5lje3xfh7lvnpj6atva:
+    resolution: {integrity: sha512-wJTIgIkDXtUyeCJGX/iV/EdrLQAuIU0YSwl8Lxn7hcYec9VbsMJ5aYIXeSNtOqECNqVm7KFdzyJiOEij9Luoqg==}
+    peerDependencies:
+      '@adonisjs/auth': ^8.0.0
+      '@adonisjs/core': ^5.1.0
+      '@adonisjs/view': ^6.0.0
+    peerDependenciesMeta:
+      '@adonisjs/auth':
+        optional: true
+      '@adonisjs/view':
+        optional: true
+    dependencies:
+      '@adonisjs/auth': 8.2.2_74alu4wtacn4qtcwyp5os2dxp4
+      '@adonisjs/core': 5.8.5
+      '@poppinss/utils': 4.0.4
+    dev: false
 
   /@adonisjs/config/3.0.8:
     resolution: {integrity: sha512-rquKb2GVmrITfkdwbmFoTIWJRCsgci8g/FJOz3iG35AB6/dW2ksSa6TSRH+zC4fKb3MO/rkS2guUpxKTvG7wHA==}

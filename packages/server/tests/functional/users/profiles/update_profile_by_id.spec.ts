@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_USER_ID, USER_PROFILE_PATH, USER_PROFILE_PATH_WITH_ID } from '../../constantsForTesting'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH, USER_PROFILE_PATH_WITH_ID } from '../../../constantsForTests'
 
 test.group('PATCH /profile/:id', (group) => {
   group.each.setup(async () => {
@@ -12,7 +12,7 @@ test.group('PATCH /profile/:id', (group) => {
 
   test('it should update a user profile by id if the user is authenticated',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
 
       const payload = {
         biography: 'lorem ipsum dolor sit amet',
@@ -50,7 +50,7 @@ test.group('PATCH /profile/:id', (group) => {
 
   test('it should return error (404 NOT FOUND) if the given id is invalid',
     async ({ client }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
 
       const updateProfileData = {

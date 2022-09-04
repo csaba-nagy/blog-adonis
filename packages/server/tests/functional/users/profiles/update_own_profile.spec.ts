@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_USER_ID, USER_PROFILE_PATH } from '../../constantsForTesting'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH } from '../../../constantsForTests'
 
 test.group('PATCH /profile', (group) => {
   group.each.setup(async () => {
@@ -12,7 +12,7 @@ test.group('PATCH /profile', (group) => {
 
   test('it should update the authenticated user profile',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_USER_ID)
+      const user = await User.findOrFail(TEST_ADMIN_ID)
 
       const payload = {
         biography: 'lorem ipsum dolor sit amet',

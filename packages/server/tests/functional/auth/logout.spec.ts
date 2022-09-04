@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { AUTH_LOGOUT_PATH, DB_CONNECTION, TEST_USER_ID } from '../constantsForTesting'
+import { AUTH_LOGOUT_PATH, DB_CONNECTION, TEST_ADMIN_ID } from '../../constantsForTests'
 
 test.group('GET /auth/logout', (group) => {
   group.each.setup(async () => {
@@ -11,7 +11,7 @@ test.group('GET /auth/logout', (group) => {
   })
 
   test('it should logout the authenticated user', async ({ client }) => {
-    const user = await User.find(TEST_USER_ID)
+    const user = await User.find(TEST_ADMIN_ID)
     const response = await client.get(AUTH_LOGOUT_PATH).loginAs(user!)
 
     response.assertStatus(StatusCodes.OK)
