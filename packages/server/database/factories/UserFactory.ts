@@ -9,7 +9,7 @@ export default Factory.define(User, ({ faker }) => {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
-    password: 'verysafepassword',
+    password: '!Password11',
   }
 })
   // With state method, we can set the model properties

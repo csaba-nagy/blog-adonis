@@ -15,7 +15,7 @@ test.group('POST /users', (group) => {
       firstName: 'Jane',
       lastName: 'Doe',
       email: 'janedoe@email.com',
-      password: 'testpassword',
+      password: '!Password11',
     }
 
     const requiredProperties = ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at']
@@ -69,7 +69,7 @@ test.group('POST /users', (group) => {
           firstName: 'test',
           lastName: 'test',
           email: 'test@email.com',
-          password: 'password',
+          password: '!Password11',
         }
 
         payload[userData] = ''

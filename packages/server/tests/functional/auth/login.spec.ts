@@ -16,7 +16,7 @@ test.group('POST /auth/login', (group) => {
 
       const response = await client.post(AUTH_LOGIN_PATH).json({
         email: user.email,
-        password: 'verysafepassword', // 👈 that is defined in the UserFactory as default password
+        password: '!Password11', // 👈 that is defined in the UserFactory as default password
         // It's not the best solution, but because of the user object returns with the hashed password
         // the user.password doesn't work
         // TODO: Find a better solution

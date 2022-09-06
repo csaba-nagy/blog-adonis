@@ -32,14 +32,14 @@ test.group('GET /users', (group) => {
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const response = await client.get(USERS_PATH)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
+
   test('it should return error (403 FORBIDDEN) if the authenticated user is not authorized',
     async ({ client, assert }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
@@ -54,7 +54,7 @@ test.group('GET /users', (group) => {
 
         response.assertStatus(StatusCodes.FORBIDDEN)
 
-        response.assertTextIncludes('Not authorized')
+        response.assertTextIncludes('E_AUTHORIZATION_FAILURE')
       }
     })
 })

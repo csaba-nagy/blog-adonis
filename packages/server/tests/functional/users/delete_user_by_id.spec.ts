@@ -11,7 +11,7 @@ test.group('DELETE /users/:id', (group) => {
     return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
   })
 
-  test('it should delete user account and profile if the user is authenticated and authorized',
+  test('it should delete user account and profile if the user is an admin',
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 this user fires the delete request
 
@@ -44,14 +44,13 @@ test.group('DELETE /users/:id', (group) => {
       responseToGetDeletedProfile.assertStatus(StatusCodes.NOT_FOUND)
     })
 
-  test('it should return error if the user is not authenticated',
-    async ({ client, assert }) => {
+  test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
+    async ({ client }) => {
       const response = await client.delete(USER_PATH_WITH_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
   test('it should return error (404 NOT_FOUND) if the given id is invalid',
@@ -83,7 +82,7 @@ test.group('DELETE /users/:id', (group) => {
 
         response.assertStatus(StatusCodes.FORBIDDEN)
 
-        response.assertTextIncludes('Not authorized')
+        response.assertTextIncludes('E_AUTHORIZATION_FAILURE')
       }
     })
 })

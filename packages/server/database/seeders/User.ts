@@ -9,7 +9,7 @@ export default class extends BaseSeeder {
       firstName: 'Csaba',
       lastName: 'Nagy',
       email: 'admin@email.com',
-      password: 'password',
+      password: '!Password11',
     })
       .apply('role.admin')
       .apply('status.active')

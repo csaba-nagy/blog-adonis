@@ -41,7 +41,7 @@ export class UpdateUserValidator {
       rules.maxLength(100),
     ]),
     password: schema.string.nullableAndOptional({}, [
-      rules.minLength(8),
+      rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
     ]),
   })
 
@@ -56,5 +56,13 @@ export class UpdateUserValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'required': '{{ field }} is required',
+    'alpha': 'Invalid characters, only alphabetic characters allowed',
+    'minLength': '{{ field }} should be at least {{ options.minLength }} characters long.',
+    'maxLength': '{{ field }} cannot be longer than {{ options.maxLength }} characters.',
+    'email': 'Invalid email format',
+    'email.unique': 'Invalid email address',
+    'password': 'Password should contains minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.',
+  }
 }

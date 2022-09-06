@@ -38,13 +38,12 @@ test.group('GET /profile/:id', (group) => {
     })
 
   test('it should return an error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const response = await client.get(USER_PROFILE_PATH_WITH_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
   test('it should return error (404 NOT FOUND), if the given id is invalid',

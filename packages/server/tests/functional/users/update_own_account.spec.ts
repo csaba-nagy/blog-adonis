@@ -50,7 +50,7 @@ test.group('PATCH /account', (group) => {
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const payload = {} // 👈 payload data is not relevant in this case
 
       const response = await client
@@ -59,8 +59,7 @@ test.group('PATCH /account', (group) => {
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
   test('it should return validation error if some of the given data not valid',

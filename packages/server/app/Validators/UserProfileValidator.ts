@@ -25,10 +25,7 @@ export class UserProfileValidator {
    *    ```
    */
   public schema = schema.create({
-    avatarUrl: schema.string.nullableAndOptional({}, [
-      rules.minLength(10),
-      rules.maxLength(250),
-    ]),
+    avatarUrl: schema.string.nullableAndOptional({}, []),
     biography: schema.string.nullableAndOptional({}, [
       rules.minLength(5),
       rules.maxLength(1000),
@@ -87,5 +84,9 @@ export class UserProfileValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'url': 'The given link is invalid. Only https protocol allowed.',
+    'biography.minLength': 'The {{ field }} should be {{ options.minLength }} characters long at least.',
+    'biography.maxLength': '{{ field }} cannot be longer than {{ options.maxLength }} characters.',
+  }
 }

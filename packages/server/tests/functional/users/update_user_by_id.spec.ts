@@ -1,6 +1,6 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
-import { StatusCodes, UserRole } from 'App/Enums'
+import { StatusCodes, UserRole, UserStatus } from 'App/Enums'
 import { User } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import UserFactory from 'Database/factories/UserFactory'
@@ -60,7 +60,7 @@ test.group('PATCH /users/:id', (group) => {
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const payload = {} // 👈 payload data is not relevant in this case
 
       const response = await client
@@ -69,18 +69,20 @@ test.group('PATCH /users/:id', (group) => {
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
   test('it should return error (404 NOT_FOUND) if the given id is invalid',
-    async ({ client }) => {
+    async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
 
       const payload = {
         firstName: 'James',
       }
+
+      // Only the admin users can fire this action
+      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
       const response = await client.patch(`${USERS_PATH}/${invalidId}`)
         .json(payload)
@@ -95,7 +97,10 @@ test.group('PATCH /users/:id', (group) => {
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
 
-      const requiredUserProperties = ['firstName', 'lastName', 'email', 'password']
+      const requiredUserProperties = ['firstName', 'lastName', 'email', 'role', 'status']
+
+      // Only the admin users can fire this action
+      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
       for (const userProperty of requiredUserProperties) {
@@ -103,7 +108,8 @@ test.group('PATCH /users/:id', (group) => {
           firstName: 'James',
           lastName: 'Jones',
           email: 'jamesjones@email.com',
-          password: 'verysafepassword',
+          role: UserRole.USER,
+          status: UserStatus.ACTIVE,
         }
 
         payload[userProperty] = '_'
@@ -142,7 +148,7 @@ test.group('PATCH /users/:id', (group) => {
 
         response.assertStatus(StatusCodes.FORBIDDEN)
 
-        response.assertTextIncludes('Not authorized')
+        response.assertTextIncludes('E_AUTHORIZATION_FAILURE')
       }
     })
 })
