@@ -28,8 +28,7 @@ export class AuthValidator {
     email: schema.string({ trim: true }, [
       rules.email(),
     ]),
-    password: schema.string({}, [
-    ]),
+    password: schema.string({}, []),
   })
 
   /**
@@ -44,6 +43,7 @@ export class AuthValidator {
    *
    */
   public messages: CustomMessages = {
-    'email.email': 'Email should be a valid email address',
+    required: '{{ field }} cannot be empty',
+    email: 'Invalid email format',
   }
 }

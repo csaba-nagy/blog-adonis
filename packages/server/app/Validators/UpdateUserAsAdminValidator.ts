@@ -41,9 +41,6 @@ export class UpdateUserAsAdminValidator {
       rules.unique({ table: 'users', column: 'email' }),
       rules.maxLength(100),
     ]),
-    password: schema.string.nullableAndOptional({}, [
-      rules.minLength(8),
-    ]),
     role: schema.enum.nullableAndOptional(Object.values(UserRole)),
     status: schema.enum.nullableAndOptional(Object.values(UserStatus)),
   })
@@ -59,5 +56,13 @@ export class UpdateUserAsAdminValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    'required': '{{ field }} is required',
+    'alpha': 'Invalid characters, only alphabetic characters allowed',
+    'minLength': '{{ field }} should be at least {{ options.minLength }} characters long.',
+    'maxLength': '{{ field }} cannot be longer than {{ options.maxLength }} characters.',
+    'email': 'Invalid email format',
+    'email.unique': 'Invalid email address',
+    'enum': 'The value must be one of the following values: {{ options.choices }}',
+  }
 }
