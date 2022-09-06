@@ -34,18 +34,16 @@ test.group('PATCH /profile/:id', (group) => {
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const updateProfileData = {
         biography: 'lorem ipsum dolor sit amet',
       }
 
-      const responseWithoutAuth = await client.patch(USER_PROFILE_PATH_WITH_ID).json(updateProfileData)
+      const response = await client.patch(USER_PROFILE_PATH_WITH_ID).json(updateProfileData)
 
-      responseWithoutAuth.assertStatus(StatusCodes.UNAUTHORIZED)
+      response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(responseWithoutAuth.body(), ['errors'])
-
-      responseWithoutAuth.assertTextIncludes('UNAUTHORIZED')
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
   test('it should return error (404 NOT FOUND) if the given id is invalid',
@@ -57,13 +55,13 @@ test.group('PATCH /profile/:id', (group) => {
         biography: 'lorem ipsum dolor sit amet',
       }
 
-      const responseWithAuthenticatedUserAndInvalidId = await client
+      const response = await client
         .patch(`${USER_PROFILE_PATH}/${invalidId}`)
         .json(updateProfileData)
         .guard('api')
         .loginAs(user)
 
-      responseWithAuthenticatedUserAndInvalidId.assertStatus(StatusCodes.NOT_FOUND)
-      responseWithAuthenticatedUserAndInvalidId.assertTextIncludes('NOT_FOUND')
+      response.assertStatus(StatusCodes.NOT_FOUND)
+      response.assertTextIncludes('NOT_FOUND')
     })
 })

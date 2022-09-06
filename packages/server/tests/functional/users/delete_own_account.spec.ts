@@ -30,16 +30,15 @@ test.group('DELETE /account', (group) => {
       })
 
       responseToLogin.assertStatus(StatusCodes.UNAUTHORIZED)
-      responseToLogin.assertTextIncludes('Invalid credentials')
+      responseToLogin.assertTextIncludes('E_AUTHENTICATION_FAILURE')
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const response = await client.delete(USER_ACCOUNT_PATH)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
-      assert.properties(response.body(), ['errors'])
-      assert.exists(response.body().errors[0].message)
+      response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 })
