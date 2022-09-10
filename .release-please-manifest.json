@@ -1,6 +1,4 @@
 {
-  "packages": {
     ".": "0.1.0",
     "packages/server": "0.1.0"
-  }
 }
