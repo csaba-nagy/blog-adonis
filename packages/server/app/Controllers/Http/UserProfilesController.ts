@@ -4,7 +4,7 @@ import { StatusCodes } from 'App/Enums'
 import { UserProfilesRepository } from 'App/Repositories'
 import { UserProfileValidator } from 'App/Validators'
 
-export class UserProfilesController {
+export default class UserProfilesController {
   public async getOwnUserProfile({ auth, bouncer, response }: HttpContextContract) {
     const { id } = await auth.user!
 

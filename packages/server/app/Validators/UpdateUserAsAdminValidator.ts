@@ -3,7 +3,7 @@ import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { UserRole, UserStatus } from 'App/Enums'
 
-export class UpdateUserAsAdminValidator {
+export default class UpdateUserAsAdminValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*

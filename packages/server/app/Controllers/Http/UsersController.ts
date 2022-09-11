@@ -3,7 +3,7 @@ import { UsersRepository } from 'App/Repositories'
 import { CreateUserValidator, UpdateUserAsAdminValidator, UpdateUserValidator } from 'App/Validators'
 import { StatusCodes } from 'App/Enums'
 
-export class UsersController {
+export default class UsersController {
   public async createNewUser({ request, response }: HttpContextContract) {
     const payload = await request.validate(CreateUserValidator)
 

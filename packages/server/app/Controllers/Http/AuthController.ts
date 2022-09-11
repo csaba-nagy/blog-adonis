@@ -4,7 +4,7 @@ import { InvalidCredentialException } from 'App/Exceptions'
 import { UsersRepository } from 'App/Repositories'
 import { AuthValidator } from 'App/Validators'
 
-export class AuthController {
+export default class AuthController {
   public async login({ auth, request, response }: HttpContextContract) {
     const { email, password } = await request.validate(AuthValidator)
 

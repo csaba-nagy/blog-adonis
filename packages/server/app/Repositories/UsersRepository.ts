@@ -1,7 +1,7 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { User } from 'App/Models'
 
-export class UsersRepository {
+export default class UsersRepository {
   public async getUsers() {
     return await User.all()
   }
