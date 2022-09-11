@@ -1,0 +1,43 @@
+name: Feature Request
+description: Request a new feature
+title: "[feat]: "
+labels: ["enhancement"]
+assignees:
+  - csaba-nagy
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill the values properly to create the perfect feature request
+
+  - type: input
+    id: issue-title
+    attributes:
+      label: Title
+      placeholder: Title of the requested feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Description
+      placeholder: Add a short description about the requested feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-solution
+    attributes:
+      label: Possible solution
+      placeholder: If you have an idea how to implement this feature, type here...
+    validations:
+      required: false
+
+  - type: textarea
+    id: issue-sources
+    attributes:
+      label: Source(s)
+      placeholder: Add helpful sources
+    validations:
+      required: false

@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report a bug
+title: "[bug]: "
+labels: ["fix needed", "bug"]
+assignees:
+  - csaba-nagy
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill the values properly to create the perfect bug report
+
+  - type: input
+    id: report-title
+    attributes:
+      label: Title
+      placeholder: Add title
+    validations:
+      required: true
+
+  - type: textarea
+    id: report-description
+    attributes:
+      label: Description
+      placeholder: Add a short description about the bug
+    validations:
+      required: true
+
+  - type: textarea
+    id: report-solution
+    attributes:
+      label: Possible solution
+      placeholder: If you have an idea how to fix this bug, type here...
+    validations:
+      required: false
+
+  - type: textarea
+    id: report-sources
+    attributes:
+      label: Source(s)
+      placeholder: Add helpful sources
+    validations:
+      required: false
