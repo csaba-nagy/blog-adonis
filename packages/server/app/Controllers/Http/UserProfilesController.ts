@@ -5,7 +5,7 @@ import { UserProfilesRepository } from 'App/Repositories'
 import { UserProfileValidator } from 'App/Validators'
 
 export default class UserProfilesController {
-  public async getOwnUserProfile({ auth, bouncer, response }: HttpContextContract) {
+  public async getUserProfile({ auth, bouncer, response }: HttpContextContract) {
     const { id } = await auth.user!
 
     const profile = await new UserProfilesRepository().getUserProfile(id)

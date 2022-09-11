@@ -15,7 +15,7 @@ export const userProfileRoutes = Route.group(() => {
     Route[RequestMethods.GET](userProfilesApiEndpoints.profileById, 'UserProfilesController.getUserProfileById')
     Route[RequestMethods.PATCH](userProfilesApiEndpoints.profileById, 'UserProfilesController.updateUserProfileById')
 
-    Route[RequestMethods.GET](userProfilesApiEndpoints.profile, 'UserProfilesController.getOwnUserProfile')
+    Route[RequestMethods.GET](userProfilesApiEndpoints.profile, 'UserProfilesController.getUserProfile')
     Route[RequestMethods.PATCH](userProfilesApiEndpoints.profile, 'UserProfilesController.updateUserProfile')
   }).prefix(API_VERSION).middleware('auth')
 }).prefix(API_BASE_ROUTE)

@@ -35,7 +35,7 @@ export default class UsersController {
     response.status(StatusCodes.OK).send(user)
   }
 
-  public async updateUser({ bouncer, request, response }: HttpContextContract) {
+  public async updateUserById({ bouncer, request, response }: HttpContextContract) {
     await bouncer.with('UserPolicy').authorize('updateUserById')
 
     const validatedData = await request.validate(UpdateUserAsAdminValidator)
@@ -48,7 +48,7 @@ export default class UsersController {
     response.status(StatusCodes.OK).send(updatedUser)
   }
 
-  public async updateUserOwnData({ auth, request, response }: HttpContextContract) {
+  public async updateUser({ auth, request, response }: HttpContextContract) {
     const { id: userId } = auth.user!
     const validatedData = await request.validate(UpdateUserValidator)
     const payload = {
@@ -60,7 +60,7 @@ export default class UsersController {
     response.status(StatusCodes.OK).send(updatedUser)
   }
 
-  public async deleteUser({ bouncer, request, response }: HttpContextContract) {
+  public async deleteUserById({ bouncer, request, response }: HttpContextContract) {
     await bouncer.with('UserPolicy').authorize('deleteUserById')
 
     await new UsersRepository().deleteUser(request.param('id'))
@@ -68,7 +68,7 @@ export default class UsersController {
     response.status(StatusCodes.OK)
   }
 
-  public async deleteUserByItself({ auth, response }: HttpContextContract) {
+  public async deleteUser({ auth, response }: HttpContextContract) {
     const { id } = await auth.user!
 
     await new UsersRepository().deleteUser(id)
