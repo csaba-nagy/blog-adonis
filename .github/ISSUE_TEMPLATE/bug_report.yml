@@ -3,7 +3,7 @@ description: Report a bug
 title: "[bug]: "
 labels: ["fix needed", "bug"]
 assignees:
-  -csaba-nagy
+  - csaba-nagy
 body:
   - type: markdown
     attributes:
