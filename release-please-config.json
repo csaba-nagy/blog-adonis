@@ -1,0 +1,17 @@
+{
+  "bump-minor-pre-major": true,
+  "prerelease": true,
+  "always-link-local": false,
+  "plugins": ["node-workspace"],
+  "packages": {
+    ".": {
+      "release-type": "node"
+    },
+    "packages/server": {
+      "release-type": "node",
+      "draft": "false",
+      "release-as": "",
+      "package-name": "@blog-adonis/server"
+    }
+  }
+}
