@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug
-title: "[bug]: "
-labels: ["fix needed", "bug"]
+title: '[bug]: '
+labels: [fix needed, bug]
 assignees:
   - csaba-nagy
 body:
