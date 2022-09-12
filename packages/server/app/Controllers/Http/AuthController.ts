@@ -4,12 +4,14 @@ import { InvalidCredentialException } from 'App/Exceptions'
 import { UsersRepository } from 'App/Repositories'
 import { AuthValidator } from 'App/Validators'
 
-export class AuthController {
-  public async login({ auth, request, response }: HttpContextContract) {
+export default class AuthController {
+  constructor(private repository = new UsersRepository()) {}
+
+  public login = async ({ auth, request, response }: HttpContextContract) => {
     const { email, password } = await request.validate(AuthValidator)
 
     try {
-      const user = await new UsersRepository().getUserByEmail(email)
+      const user = await this.repository.getUserByEmail(email)
 
       if (!await Hash.verify(user.password, password))
         throw new InvalidCredentialException()
@@ -23,7 +25,7 @@ export class AuthController {
     }
   }
 
-  public async logout({ auth, response }) {
+  public logout = async ({ auth, response }: HttpContextContract) => {
     await auth.use('api').revoke()
 
     return response.clearCookie('token').ok({ revoked: true })

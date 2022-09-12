@@ -3,9 +3,9 @@ import type { HasMany, HasOne } from '@ioc:Adonis/Lucid/Orm'
 import { BaseModel, beforeSave, column, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import type { UserRole, UserStatus } from 'App/Enums'
-import { Comment, Post, UserProfile } from '.'
+import { Comment, Post, UserProfile } from 'App/Models'
 
-export class User extends BaseModel {
+export default class User extends BaseModel {
   public static table = 'users'
 
   @column({ isPrimary: true })
@@ -52,14 +52,3 @@ export class User extends BaseModel {
       user.password = await Hash.make(user.password)
   }
 }
-
-/*
-|-------------------------------------------------------------------------------
-| Why need to export default User?
-|-------------------------------------------------------------------------------
-|
-| https://github.com/adonisjs/core/discussions/3229
-| "The user model need to have a export default
-| or you need to fix the config file to return User class."
-*/
-export default User

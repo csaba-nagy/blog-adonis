@@ -2,7 +2,7 @@ import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PROFILE_PATH } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH_PREFIX, USER_PROFILE_PATH } from '../../constantsForTests'
 
 test.group('POST /users', (group) => {
   group.each.setup(async () => {
@@ -20,7 +20,7 @@ test.group('POST /users', (group) => {
 
     const requiredProperties = ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at']
 
-    const response = await client.post(USERS_PATH).json(payload)
+    const response = await client.post(USERS_PATH_PREFIX).json(payload)
     const { id } = response.body()
 
     response.assertStatus(StatusCodes.CREATED)
@@ -50,7 +50,7 @@ test.group('POST /users', (group) => {
         password: 'password',
       }
 
-      const response = await client.post(USERS_PATH).json(payload)
+      const response = await client.post(USERS_PATH_PREFIX).json(payload)
 
       response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
@@ -74,7 +74,7 @@ test.group('POST /users', (group) => {
 
         payload[userData] = ''
 
-        const response = await client.post(USERS_PATH).json(payload)
+        const response = await client.post(USERS_PATH_PREFIX).json(payload)
 
         response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 

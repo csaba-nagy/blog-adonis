@@ -2,7 +2,7 @@ import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH_PREFIX } from '../../constantsForTests'
 
 test.group('GET /users', (group) => {
   group.each.setup(async () => {
@@ -14,7 +14,7 @@ test.group('GET /users', (group) => {
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
 
-      const response = await client.get(USERS_PATH).guard('api').loginAs(user)
+      const response = await client.get(USERS_PATH_PREFIX).guard('api').loginAs(user)
 
       response.assertStatus(StatusCodes.OK)
 
@@ -33,7 +33,7 @@ test.group('GET /users', (group) => {
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.get(USERS_PATH)
+      const response = await client.get(USERS_PATH_PREFIX)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
@@ -50,7 +50,7 @@ test.group('GET /users', (group) => {
 
         assert.propertyVal(user.$attributes, 'role', userRole)
 
-        const response = await client.get(USERS_PATH).guard('api').loginAs(user)
+        const response = await client.get(USERS_PATH_PREFIX).guard('api').loginAs(user)
 
         response.assertStatus(StatusCodes.FORBIDDEN)
 

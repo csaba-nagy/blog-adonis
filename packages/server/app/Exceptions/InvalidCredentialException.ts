@@ -13,7 +13,7 @@ import { StatusCodes } from 'App/Enums'
 | new InvalidCredentialException('message', 500, 'E_RUNTIME_EXCEPTION')
 |
 */
-export class InvalidCredentialException extends Exception {
+export default class InvalidCredentialException extends Exception {
   constructor() {
     super('Invalid credentials', StatusCodes.UNAUTHORIZED, 'E_AUTHENTICATION_FAILURE')
   }

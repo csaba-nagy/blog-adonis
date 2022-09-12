@@ -1,1 +1,1 @@
-export * from './InvalidCredentialException'
+export { default as InvalidCredentialException } from './InvalidCredentialException'

@@ -4,7 +4,8 @@ import { StatusCodes, UserRole, UserStatus } from 'App/Enums'
 import { User } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PATH_WITH_ID } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH, USER_ACCOUNT_PATH_WITH_ID }
+  from '../../constantsForTests'
 
 test.group('PATCH /users/:id', (group) => {
   group.each.setup(async () => {
@@ -25,7 +26,7 @@ test.group('PATCH /users/:id', (group) => {
         lastName: 'Doe',
       }
 
-      const preUpdateData = await client.get(USER_PATH_WITH_ID)
+      const preUpdateData = await client.get(USER_ACCOUNT_PATH_WITH_ID)
         .guard('api')
         .loginAs(user)
 
@@ -35,7 +36,7 @@ test.group('PATCH /users/:id', (group) => {
       assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
       const response = await client
-        .patch(USER_PATH_WITH_ID)
+        .patch(USER_ACCOUNT_PATH_WITH_ID)
         .json(payload)
         .guard('api')
         .loginAs(user)
@@ -51,7 +52,7 @@ test.group('PATCH /users/:id', (group) => {
       assert.notProperty(response.body(), 'password')
 
       const getUpdatedUser = await client
-        .get(USER_PATH_WITH_ID)
+        .get(USER_ACCOUNT_PATH_WITH_ID)
         .guard('api')
         .loginAs(user)
 
@@ -64,7 +65,7 @@ test.group('PATCH /users/:id', (group) => {
       const payload = {} // 👈 payload data is not relevant in this case
 
       const response = await client
-        .patch(USER_PATH_WITH_ID)
+        .patch(USER_ACCOUNT_PATH_WITH_ID)
         .json(payload)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
@@ -84,7 +85,7 @@ test.group('PATCH /users/:id', (group) => {
       // Only the admin users can fire this action
       assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
-      const response = await client.patch(`${USERS_PATH}/${invalidId}`)
+      const response = await client.patch(`${USER_ACCOUNT_PATH}/${invalidId}`)
         .json(payload)
         .guard('api')
         .loginAs(user)
@@ -115,7 +116,7 @@ test.group('PATCH /users/:id', (group) => {
         payload[userProperty] = '_'
 
         const response = await client
-          .patch(USER_PATH_WITH_ID)
+          .patch(USER_ACCOUNT_PATH_WITH_ID)
           .json(payload)
           .guard('api')
           .loginAs(user)
@@ -132,7 +133,7 @@ test.group('PATCH /users/:id', (group) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
       const { id } = await UserFactory.create()
-      const targetedUserPath = `${USERS_PATH}/${id}`
+      const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
 
       for (const userRole of unauthorizedUserRoles) {
         // set the TEST_USER role to false value directly. NOTE: The TEST_USER is admin as default
