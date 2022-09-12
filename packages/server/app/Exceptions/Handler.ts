@@ -22,7 +22,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     super(Logger)
   }
 
-  public async handle(error: any, { response }: HttpContextContract) {
+  public handle = async (error: any, { response }: HttpContextContract) => {
     if (error.code === 'E_VALIDATION_FAILURE')
       return response.status(error.status).send(error.messages)
 

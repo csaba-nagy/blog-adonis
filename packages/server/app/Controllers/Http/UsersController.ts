@@ -4,38 +4,38 @@ import { CreateUserValidator, UpdateUserAsAdminValidator, UpdateUserValidator } 
 import { StatusCodes } from 'App/Enums'
 
 export default class UsersController {
-  public async createNewUser({ request, response }: HttpContextContract) {
+  constructor(private repository = new UsersRepository()) {}
+
+  public createNewUser = async ({ request, response }: HttpContextContract) => {
     const payload = await request.validate(CreateUserValidator)
+    const user = await this.repository.createUser(payload)
 
-    const user = await new UsersRepository().createUser(payload)
-
-    response.status(StatusCodes.CREATED).send(user)
+    return response.created(user)
   }
 
-  public async getAllUsers({ bouncer, response }: HttpContextContract) {
+  public getAllUsers = async ({ bouncer, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('getAllUsers')
 
-    const users = await new UsersRepository().getUsers()
+    const users = await this.repository.getUsers()
 
-    response.status(StatusCodes.OK).send(users)
+    return response.ok(users)
   }
 
-  public async getUserById({ bouncer, request, response }: HttpContextContract) {
+  public getUserById = async ({ bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('getUserById')
 
-    const user = await new UsersRepository().getUserById(request.param('id'))
+    const user = await this.repository.getUserById(request.param('id'))
 
-    response.status(StatusCodes.OK).send(user)
+    return response.ok(user)
   }
 
-  public async getUserAccount({ auth, response }: HttpContextContract) {
-    const { id } = auth.user!
-    const user = await new UsersRepository().getUserById(id)
+  public getUserAccount = async ({ auth, response }: HttpContextContract) => {
+    const user = await this.repository.getUserById(auth.user!.id)
 
-    response.status(StatusCodes.OK).send(user)
+    return response.ok(user)
   }
 
-  public async updateUserById({ bouncer, request, response }: HttpContextContract) {
+  public updateUserById = async ({ bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('updateUserById')
 
     const validatedData = await request.validate(UpdateUserAsAdminValidator)
@@ -43,36 +43,36 @@ export default class UsersController {
       id: request.param('id'),
       ...validatedData,
     }
-    const updatedUser = await new UsersRepository().updateUser(payload)
 
-    response.status(StatusCodes.OK).send(updatedUser)
+    const updatedUser = await this.repository.updateUser(payload)
+
+    return response.ok(updatedUser)
   }
 
-  public async updateUser({ auth, request, response }: HttpContextContract) {
+  public updateUser = async ({ auth, request, response }: HttpContextContract) => {
     const { id: userId } = auth.user!
     const validatedData = await request.validate(UpdateUserValidator)
     const payload = {
       id: userId,
       ...validatedData,
     }
-    const updatedUser = await new UsersRepository().updateUser(payload)
 
-    response.status(StatusCodes.OK).send(updatedUser)
+    const updatedUser = await this.repository.updateUser(payload)
+
+    return response.ok(updatedUser)
   }
 
-  public async deleteUserById({ bouncer, request, response }: HttpContextContract) {
+  public deleteUserById = async ({ bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('deleteUserById')
 
-    await new UsersRepository().deleteUser(request.param('id'))
+    await this.repository.deleteUser(request.param('id'))
 
-    response.status(StatusCodes.OK)
+    return response.status(StatusCodes.OK)
   }
 
-  public async deleteUser({ auth, response }: HttpContextContract) {
-    const { id } = await auth.user!
+  public deleteUser = async ({ auth, response }: HttpContextContract) => {
+    await this.repository.deleteUser(auth.user!.id)
 
-    await new UsersRepository().deleteUser(id)
-
-    response.status(StatusCodes.OK)
+    return response.status(StatusCodes.OK)
   }
 }
