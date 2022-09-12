@@ -3,7 +3,8 @@ import { test } from '@japa/runner'
 import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PATH_WITH_ID, USER_PROFILE_PATH } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH, USER_ACCOUNT_PATH_WITH_ID, USER_PROFILE_PATH }
+  from '../../constantsForTests'
 
 test.group('DELETE /users/:id', (group) => {
   group.each.setup(async () => {
@@ -16,7 +17,7 @@ test.group('DELETE /users/:id', (group) => {
       const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 this user fires the delete request
 
       const { id } = await UserFactory.create() // 👈 this is the user that should be deleted, a.k.a targetedUser
-      const targetedUserPath = `${USERS_PATH}/${id}`
+      const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
       const targetedUserProfilePath = `${USER_PROFILE_PATH}/${id}`
 
       // Only the admin users can fire this action
@@ -46,7 +47,7 @@ test.group('DELETE /users/:id', (group) => {
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.delete(USER_PATH_WITH_ID)
+      const response = await client.delete(USER_ACCOUNT_PATH_WITH_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
@@ -58,7 +59,7 @@ test.group('DELETE /users/:id', (group) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
       const response = await client
-        .delete(`${USERS_PATH}/${invalidId}`)
+        .delete(`${USER_ACCOUNT_PATH}/${invalidId}`)
         .guard('api')
         .loginAs(user)
 
@@ -70,7 +71,7 @@ test.group('DELETE /users/:id', (group) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
       const { id } = await UserFactory.create() // 👈 this is the user that should be deleted, a.k.a targetedUser
-      const targetedUserPath = `${USERS_PATH}/${id}`
+      const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
 
       for (const userRole of unauthorizedUserRoles) {
         // set the TEST_USER role to false value directly. NOTE: The TEST_USER is admin as default

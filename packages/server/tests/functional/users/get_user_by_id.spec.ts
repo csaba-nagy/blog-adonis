@@ -4,7 +4,8 @@ import { StatusCodes, UserRole } from 'App/Enums'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH, USER_PATH_WITH_ID } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH, USER_ACCOUNT_PATH_WITH_ID }
+  from '../../constantsForTests'
 
 test.group('GET /users/:id', (group) => {
   group.each.setup(async () => {
@@ -25,7 +26,7 @@ test.group('GET /users/:id', (group) => {
       assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
       const response = await client
-        .get(USER_PATH_WITH_ID)
+        .get(USER_ACCOUNT_PATH_WITH_ID)
         .guard('api')
         .loginAs(user)
 
@@ -40,7 +41,7 @@ test.group('GET /users/:id', (group) => {
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.get(USER_PATH_WITH_ID)
+      const response = await client.get(USER_ACCOUNT_PATH_WITH_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
@@ -52,7 +53,7 @@ test.group('GET /users/:id', (group) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
       const response = await client
-        .get(`${USERS_PATH}/${invalidId}`)
+        .get(`${USER_ACCOUNT_PATH}/${invalidId}`)
         .guard('api')
         .loginAs(user)
 
@@ -64,7 +65,7 @@ test.group('GET /users/:id', (group) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
       const { id } = await UserFactory.create()
-      const targetedUserPath = `${USERS_PATH}/${id}`
+      const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
 
       for (const userRole of unauthorizedUserRoles) {
         // set the TEST_USER role to false value directly. NOTE: The TEST_USER is admin as default
