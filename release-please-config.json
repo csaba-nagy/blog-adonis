@@ -2,6 +2,7 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "prerelease": true,
+  "changelog-type": "github",
   "always-link-local": false,
   "plugins": ["node-workspace"],
   "packages": {
