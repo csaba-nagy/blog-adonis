@@ -1,5 +1,14 @@
 # Changelog
 
+## What's Changed
+* Add issue templates by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/37
+* General refactoring by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/39
+* chore: release 0.2.1 by @github-actions in https://github.com/csaba-nagy/blog-adonis/pull/40
+* Fix changelog type by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/43
+
+
+**Full Changelog**: https://github.com/csaba-nagy/blog-adonis/compare/blog-adonis-v0.2.0...blog-adonis-v0.2.1
+
 ## [0.2.0](https://github.com/csaba-nagy/blog-adonis/compare/blog-adonis-v0.1.0...blog-adonis-v0.2.0) (2022-09-11)
 
 
