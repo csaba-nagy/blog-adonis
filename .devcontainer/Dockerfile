@@ -14,7 +14,6 @@ ARG USER=node
 USER ${USER}
 
 RUN npm install -g \
-  pnpm \
-  release-please
+  pnpm
 
 RUN pnpm config set store-dir /home/${USER}/.pnpm-store
