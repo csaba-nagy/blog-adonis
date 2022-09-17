@@ -25,6 +25,7 @@ importers:
       '@japa/runner': ^2.0.9
       adonis-preset-ts: ^2.1.0
       c8: ^7.12.0
+      glob-parent: latest
       luxon: ^3.0.1
       pg: ^8.7.3
       phc-argon2: ^1.1.3
@@ -54,6 +55,7 @@ importers:
       '@japa/runner': 2.0.9
       adonis-preset-ts: 2.1.0
       c8: 7.12.0
+      glob-parent: 6.0.2
       pino-pretty: 8.1.0
       typescript: 4.6.4
       youch: 3.2.0
@@ -315,7 +317,7 @@ packages:
       fast-deep-equal: 3.1.3
       igniculus: 1.5.0
       knex: 2.2.0_pg@8.7.3
-      knex-dynamic-connection: 3.0.0_pg@8.7.3
+      knex-dynamic-connection: 3.0.0_knex@2.2.0
       luxon: 2.5.0
       macroable: 7.0.1
       pretty-hrtime: 1.0.3
@@ -4051,20 +4053,15 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
-  /knex-dynamic-connection/3.0.0_pg@8.7.3:
+  /knex-dynamic-connection/3.0.0_knex@2.2.0:
     resolution: {integrity: sha512-LSUlabH/5QHTzMxd8d+bhbiBAivV7QdtE4zPI2CfKYbx+uV1gqaN5Ua5AZc/O7kGAQJ4q35/4gUheCoHGPUHzg==}
+    peerDependencies:
+      knex: ^2.0.0
     dependencies:
       debug: 4.3.4
       knex: 2.2.0_pg@8.7.3
     transitivePeerDependencies:
-      - better-sqlite3
-      - mysql
-      - mysql2
-      - pg
-      - pg-native
-      - sqlite3
       - supports-color
-      - tedious
     dev: false
 
   /knex/2.2.0_pg@8.7.3:
