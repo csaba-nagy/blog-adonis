@@ -3,6 +3,7 @@ import type { BelongsTo, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { BaseModel, belongsTo, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import type { PostCategory, PostState } from 'App/Enums'
 import { Asset, User } from 'App/Models'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 
 export default class Post extends BaseModel {
   @column({ isPrimary: true })
@@ -12,10 +13,15 @@ export default class Post extends BaseModel {
   public pageTitle: string
 
   @column()
-  public title: string
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['title'],
+    allowUpdates: true,
+  })
+  public slug: string
 
   @column()
-  public slug: string
+  public title: string
 
   @column()
   public category: PostCategory
