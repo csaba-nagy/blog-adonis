@@ -9,6 +9,12 @@
 
 **Full Changelog**: https://github.com/csaba-nagy/blog-adonis/compare/blog-adonis-v0.2.0...blog-adonis-v0.2.1
 
+## What's Changed
+* Update glob-parent package by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/47
+
+
+**Full Changelog**: https://github.com/csaba-nagy/blog-adonis/compare/blog-adonis-v0.2.1...blog-adonis-v0.2.2
+
 ## [0.2.0](https://github.com/csaba-nagy/blog-adonis/compare/blog-adonis-v0.1.0...blog-adonis-v0.2.0) (2022-09-11)
 
 

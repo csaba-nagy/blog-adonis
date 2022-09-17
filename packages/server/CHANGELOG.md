@@ -1,5 +1,14 @@
 # Changelog
 
+## What's Changed
+* Fix changelog type by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/43
+* chore: release main by @github-actions in https://github.com/csaba-nagy/blog-adonis/pull/44
+* Fix manifest pull request title by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/45
+* Update glob-parent package by @csaba-nagy in https://github.com/csaba-nagy/blog-adonis/pull/47
+
+
+**Full Changelog**: https://github.com/csaba-nagy/blog-adonis/compare/server-v0.2.1...server-v0.2.2
+
 ## [0.2.1](https://github.com/csaba-nagy/blog-adonis/compare/server-v0.2.0...server-v0.2.1) (2022-09-12)
 
 
