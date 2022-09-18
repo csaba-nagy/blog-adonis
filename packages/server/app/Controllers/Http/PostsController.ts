@@ -1,27 +1,43 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { StatusCodes } from 'App/Enums'
 
 import { PostsRepository } from 'App/Repositories'
 
 export default class PostsController {
   constructor(private repository = new PostsRepository()) {}
 
-  public createPost = async () => {
-    return await this.repository.createPost()
+  public createPost = async ({ request, response }: HttpContextContract) => {
+    const createdPost = await this.repository.createPost(request.body())
+
+    return response.created(createdPost)
   }
 
-  public getPost = async () => {
-    return await this.repository.getPost()
+  public getPostBySlug = async ({ request, response }: HttpContextContract) => {
+    const post = await this.repository.getPostBySlug(request.param('slug'))
+
+    return response.ok(post)
   }
 
-  public getAllPosts = async () => {
-    return await this.repository.getAllPosts()
+  public getPublicPosts = async ({ response }: HttpContextContract) => {
+    const posts = await this.repository.getPublicPosts()
+
+    return response.ok(posts)
   }
 
-  public updatePost = async () => {
-    return await this.repository.updatePost()
+  public updatePost = async ({ request, response }: HttpContextContract) => {
+    const payload = {
+      slug: request.param('slug'),
+      ...request.body(),
+    }
+
+    const updatedPost = await this.repository.updatePost(payload)
+
+    return response.ok(updatedPost)
   }
 
-  public deletePost = async () => {
-    return await this.repository.deletePost()
+  public deletePost = async ({ request, response }: HttpContextContract) => {
+    await this.repository.deletePost(request.param('slug'))
+
+    return response.status(StatusCodes.OK)
   }
 }

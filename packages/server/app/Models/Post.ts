@@ -6,6 +6,8 @@ import { Asset, User } from 'App/Models'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 
 export default class Post extends BaseModel {
+  public static table = 'posts'
+
   @column({ isPrimary: true })
   public id: number
 
