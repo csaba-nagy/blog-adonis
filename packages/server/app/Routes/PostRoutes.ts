@@ -12,9 +12,9 @@ export const postRoutes = Route.group(() => {
     Route.group(() => {
       Route[RequestMethods.GET](postApiEndPoints.posts, 'PostsController.getPublicPosts')
       Route[RequestMethods.GET](postApiEndPoints.postBySlug, 'PostsController.getPostBySlug')
-      Route[RequestMethods.POST](postApiEndPoints.posts, 'PostsController.createPost')
-      Route[RequestMethods.PATCH](postApiEndPoints.postBySlug, 'PostsController.updatePost')
-      Route[RequestMethods.DELETE](postApiEndPoints.postBySlug, 'PostsController.deletePost')
+      Route[RequestMethods.POST](postApiEndPoints.posts, 'PostsController.createPost').middleware('auth')
+      Route[RequestMethods.PATCH](postApiEndPoints.postBySlug, 'PostsController.updatePost').middleware('auth')
+      Route[RequestMethods.DELETE](postApiEndPoints.postBySlug, 'PostsController.deletePost').middleware('auth')
     }).prefix(POSTS_PATH)
   }).prefix(API_VERSION)
 }).prefix(API_BASE_ROUTE)
