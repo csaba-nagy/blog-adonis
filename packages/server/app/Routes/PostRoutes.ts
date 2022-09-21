@@ -10,7 +10,7 @@ export const postApiEndPoints = {
 export const postRoutes = Route.group(() => {
   Route.group(() => {
     Route.group(() => {
-      Route[RequestMethods.GET](postApiEndPoints.posts, 'PostsController.getPublicPosts')
+      Route[RequestMethods.GET](postApiEndPoints.posts, 'PostsController.getPosts')
       Route[RequestMethods.GET](postApiEndPoints.postBySlug, 'PostsController.getPostBySlug')
       Route[RequestMethods.POST](postApiEndPoints.posts, 'PostsController.createPost').middleware('auth')
       Route[RequestMethods.PATCH](postApiEndPoints.postBySlug, 'PostsController.updatePost').middleware('auth')

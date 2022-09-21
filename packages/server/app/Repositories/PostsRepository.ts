@@ -1,17 +1,26 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { PostState } from 'App/Enums'
+import type { User } from 'App/Models'
 import { Post } from 'App/Models'
 
 export default class PostsRepository {
   public getPublicPosts = async () => {
     return await Post.query({ client: await Database.transaction() })
-      .select('title', 'slug', 'category', 'description', 'author_id', 'updated_at')
+      .select('title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at')
       .where('state', '=', PostState.PUBLIC)
-      .orderBy('updated_at', 'desc')
+      .orderBy('published_at', 'desc')
   }
 
   public getPostBySlug = async (slug: string) =>
     await Post.findByOrFail('slug', slug)
+
+  public getAllPostsFromAuthors = async (author: User) => {
+    return await Post.query({ client: await Database.transaction() })
+      .select('title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at')
+      .where('author_id', '=', author.id)
+      .orWhere('state', '=', PostState.PUBLIC)
+      .orderBy('published_at', 'desc')
+  }
 
   public createPost = async (payload) => {
     return await Database.transaction(async (trx) => {
