@@ -1,46 +1,28 @@
 import Database from '@ioc:Adonis/Lucid/Database'
-import { PostState } from 'App/Enums'
 import type { User } from 'App/Models'
 import { Post } from 'App/Models'
 
 export default class PostsRepository {
-  public getPublicPosts = async () => {
-    return await Post.query({ client: await Database.transaction() })
-      .select('title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at')
-      .where('state', '=', PostState.PUBLIC)
-      .orderBy('published_at', 'desc')
-  }
+  private selectFields = (
+    requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at'],
+  ) => Post.query().select(...requestedData)
 
-  public getPostBySlug = async (slug: string) =>
-    await Post.findByOrFail('slug', slug)
+  public getPublicPosts = () =>
+    Database.transaction(trx =>
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()))
 
-  public getAllPostsFromAuthors = async (author: User) => {
-    return await Post.query({ client: await Database.transaction() })
-      .select('title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at')
-      .where('author_id', '=', author.id)
-      .orWhere('state', '=', PostState.PUBLIC)
-      .orderBy('published_at', 'desc')
-  }
+  public getAllPostsAsAuthor = (author: User) =>
+    Database.transaction(trx =>
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.visibleTo(author)))
 
-  public createPost = async (payload) => {
-    return await Database.transaction(async (trx) => {
-      return await Post.create(payload, { client: trx })
-    })
-  }
+  public getPostBySlug = (slug: string) => Post.findByOrFail('slug', slug)
 
-  public updatePost = async (payload) => {
-    return await Database.transaction(async (trx) => {
-      const originalPost = await Post.findByOrFail('slug', payload.slug, { client: trx })
+  public createPost = payload =>
+    Database.transaction(trx => Post.create(payload, { client: trx }))
 
-      return await originalPost.merge(payload).save()
-    })
-  }
+  public updatePost = (post: Post, payload) =>
+    Database.transaction(trx => post.useTransaction(trx).merge(payload).save())
 
-  public deletePost = async (slug: string) => {
-    await Database.transaction(async (trx) => {
-      const post = await Post.findByOrFail('slug', slug, { client: trx })
-
-      await post.delete()
-    })
-  }
+  public deletePost = (post: Post) =>
+    Database.transaction(trx => post.useTransaction(trx).delete())
 }

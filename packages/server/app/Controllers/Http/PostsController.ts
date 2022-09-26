@@ -1,15 +1,16 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { StatusCodes, UserRole } from 'App/Enums'
+import { PostState, StatusCodes, UserRole } from 'App/Enums'
 
 import { PostsRepository } from 'App/Repositories'
+import { DateTime } from 'luxon'
 
 export default class PostsController {
   constructor(private repository = new PostsRepository()) {}
 
-  public createPost = async ({ bouncer, request, response }: HttpContextContract) => {
+  public createPost = async ({ auth, bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('PostPolicy').authorize('createPost')
 
-    const createdPost = await this.repository.createPost(request.body())
+    const createdPost = await this.repository.createPost({ authorId: auth.user!.id, ...request.body() })
 
     return response.created(createdPost)
   }
@@ -25,31 +26,38 @@ export default class PostsController {
   public getPosts = async ({ auth, response }: HttpContextContract) => {
     return auth.isGuest || auth.user?.role === UserRole.USER
       ? response.ok(await this.repository.getPublicPosts())
-      : response.ok(await this.repository.getAllPostsFromAuthors(auth.user!))
+      : response.ok(await this.repository.getAllPostsAsAuthor(auth.user!))
   }
 
   public updatePost = async ({ bouncer, request, response }: HttpContextContract) => {
-    const post = await this.repository.getPostBySlug(request.param('slug'))
+    const postToUpdate = await this.repository.getPostBySlug(request.param('slug'))
 
-    await bouncer.with('PostPolicy').authorize('updatePost', post)
+    await bouncer.with('PostPolicy').authorize('updatePost', postToUpdate)
 
-    const payload = {
-      slug: request.param('slug'),
-      ...request.body(),
-    }
-
-    const updatedPost = await this.repository.updatePost(payload)
+    const updatedPost = await this.repository.updatePost(postToUpdate, request.body())
 
     return response.ok(updatedPost)
   }
 
   public deletePost = async ({ bouncer, request, response }: HttpContextContract) => {
-    const post = await this.repository.getPostBySlug(request.param('slug'))
+    const postToDelete = await this.repository.getPostBySlug(request.param('slug'))
 
-    await bouncer.with('PostPolicy').authorize('deletePost', post)
+    await bouncer.with('PostPolicy').authorize('deletePost', postToDelete)
 
-    await this.repository.deletePost(request.param('slug'))
+    await this.repository.deletePost(postToDelete)
 
     return response.status(StatusCodes.OK)
+  }
+
+  public publishPost = async ({ bouncer, request, response }: HttpContextContract) => {
+    const postToPublish = await this.repository.getPostBySlug(request.param('slug'))
+
+    await bouncer.with('PostPolicy').authorize('publishPost', postToPublish)
+
+    const payload = { state: PostState.PUBLIC, publishedAt: DateTime.now() }
+
+    const publishedPost = await this.repository.updatePost(postToPublish, payload)
+
+    return response.ok(publishedPost)
   }
 }

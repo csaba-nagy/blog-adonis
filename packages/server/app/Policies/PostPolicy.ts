@@ -22,4 +22,7 @@ export default class PostPolicy extends BasePolicy {
 
   public deletePost = async (user: User, post: Post) =>
     post.state !== PostState.PUBLIC && post.authorId === user.id
+
+  public publishPost = async (user: User, post: Post) =>
+    post.state !== PostState.PUBLIC && post.authorId === user.id
 }
