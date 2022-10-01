@@ -1,7 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { PostState, StatusCodes, UserRole } from 'App/Enums'
 
+import { PostState, StatusCodes, UserRole } from 'App/Enums'
 import { PostsRepository } from 'App/Repositories'
+import { CreatePostValidator, UpdatePostValidator } from 'App/Validators'
 import { DateTime } from 'luxon'
 
 export default class PostsController {
@@ -10,7 +11,9 @@ export default class PostsController {
   public createPost = async ({ auth, bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('PostPolicy').authorize('createPost')
 
-    const createdPost = await this.repository.createPost({ authorId: auth.user!.id, ...request.body() })
+    const validatedPayload = await request.validate(CreatePostValidator)
+
+    const createdPost = await this.repository.createPost({ authorId: auth.user!.id, ...validatedPayload })
 
     return response.created(createdPost)
   }
@@ -34,7 +37,9 @@ export default class PostsController {
 
     await bouncer.with('PostPolicy').authorize('updatePost', postToUpdate)
 
-    const updatedPost = await this.repository.updatePost(postToUpdate, request.body())
+    const validatedPayload = await request.validate(UpdatePostValidator)
+
+    const updatedPost = await this.repository.updatePost(postToUpdate, validatedPayload)
 
     return response.ok(updatedPost)
   }
