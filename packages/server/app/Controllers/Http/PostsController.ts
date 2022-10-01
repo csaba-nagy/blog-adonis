@@ -4,6 +4,7 @@ import { PostState, StatusCodes, UserRole } from 'App/Enums'
 import { PostsRepository } from 'App/Repositories'
 import { CreatePostValidator, UpdatePostValidator } from 'App/Validators'
 import { DateTime } from 'luxon'
+import { schema, validator } from '@ioc:Adonis/Core/Validator'
 
 export default class PostsController {
   constructor(private repository = new PostsRepository()) {}
@@ -60,6 +61,14 @@ export default class PostsController {
     await bouncer.with('PostPolicy').authorize('publishPost', postToPublish)
 
     const payload = { state: PostState.PUBLIC, publishedAt: DateTime.now() }
+
+    await validator.validate({
+      schema: schema.create({
+        state: schema.enum(Object.values(PostState)),
+        publishedAt: schema.date(),
+      }),
+      data: payload,
+    })
 
     const publishedPost = await this.repository.updatePost(postToPublish, payload)
 
