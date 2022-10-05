@@ -1,10 +1,14 @@
 import type { DateTime } from 'luxon'
-import type { BelongsTo, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
-import { BaseModel, belongsTo, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import type { PostCategory, PostState } from 'App/Enums'
+import type { BelongsTo, ManyToMany, ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, belongsTo, column, manyToMany, scope } from '@ioc:Adonis/Lucid/Orm'
+import type { PostCategory } from 'App/Enums'
+import { PostState } from 'App/Enums'
 import { Asset, User } from 'App/Models'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 
 export default class Post extends BaseModel {
+  public static table = 'posts'
+
   @column({ isPrimary: true })
   public id: number
 
@@ -12,10 +16,15 @@ export default class Post extends BaseModel {
   public pageTitle: string
 
   @column()
-  public title: string
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['title'],
+    allowUpdates: true,
+  })
+  public slug: string
 
   @column()
-  public slug: string
+  public title: string
 
   @column()
   public category: PostCategory
@@ -54,4 +63,18 @@ export default class Post extends BaseModel {
     pivotTable: 'asset_posts',
   })
   public assets: ManyToMany<typeof Asset>
+
+  public static published = scope((query: ModelQueryBuilderContract<typeof Post>) => {
+    query.where('state', '=', PostState.PUBLIC)
+    query.withScopes(scopes => scopes.orderedByPublicationDate())
+  })
+
+  public static visibleTo = scope((query: ModelQueryBuilderContract<typeof Post>, user: User) => {
+    query.where('author_id', user.id)
+    query.withScopes(scopes => scopes.orderedByPublicationDate())
+  })
+
+  public static orderedByPublicationDate = scope((query) => {
+    query.orderBy('published_at', 'desc')
+  })
 }

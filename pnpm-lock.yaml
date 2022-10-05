@@ -19,6 +19,7 @@ importers:
       '@adonisjs/bouncer': ^2.3.0
       '@adonisjs/core': ^5.8.5
       '@adonisjs/lucid': ^18.1.0
+      '@adonisjs/lucid-slugify': ^2.2.1
       '@adonisjs/redis': ^7.3.1
       '@adonisjs/repl': ^3.1.11
       '@japa/preset-adonis': ^1.1.0
@@ -41,6 +42,7 @@ importers:
       '@adonisjs/bouncer': 2.3.0_jdf2byn5lje3xfh7lvnpj6atva
       '@adonisjs/core': 5.8.5
       '@adonisjs/lucid': 18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y
+      '@adonisjs/lucid-slugify': 2.2.1_vphydbjpspm2wodfemp6cwesuq
       '@adonisjs/redis': 7.3.1_@adonisjs+core@5.8.5
       '@adonisjs/repl': 3.1.11_@adonisjs+core@5.8.5
       luxon: 3.0.1
@@ -304,6 +306,18 @@ packages:
       '@types/pino': 6.3.12
       abstract-logging: 2.0.1
       pino: 6.14.0
+
+  /@adonisjs/lucid-slugify/2.2.1_vphydbjpspm2wodfemp6cwesuq:
+    resolution: {integrity: sha512-l7FUVXbCYlDEAhv3skqOFVgGCXQKp7/NumEJscfxTpPbk6utmJzmxB1+aGYLHKpU4EAxcZMX6r41pdk7iR7dWg==}
+    peerDependencies:
+      '@adonisjs/core': ^5.8.0
+      '@adonisjs/lucid': ^18.0.0
+    dependencies:
+      '@adonisjs/core': 5.8.5
+      '@adonisjs/lucid': 18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y
+      '@poppinss/utils': 4.0.4
+      nanoid: 3.3.4
+    dev: false
 
   /@adonisjs/lucid/18.1.0_mnryjlxrh2p6c5fb2cek7yfk6y:
     resolution: {integrity: sha512-RAUtsBSkdEC3hkbcRawY+v2OljX1zt/b1zEuBN0/4kXHNYp3y+dCuF73OGVoWpwReJsEsvKUsGmZ1Nyn0DbBSw==}
@@ -4502,6 +4516,12 @@ packages:
   /mustache/4.2.0:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
     hasBin: true
+
+  /nanoid/3.3.4:
+    resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+    dev: false
 
   /nanomatch/1.2.13:
     resolution: {integrity: sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA==}

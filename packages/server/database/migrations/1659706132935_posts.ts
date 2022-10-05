@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.string('page_title', 100).notNullable()
       table.string('title', 100).notNullable()
-      table.string('slug', 100).notNullable()
+      table.string('slug', 100).notNullable().unique()
       table.enum('category', Object.values(PostCategory)).notNullable()
       table.integer('author_id').references('id').inTable('users').unsigned().nullable().onDelete('SET NULL')
       table.text('description').notNullable()
@@ -20,6 +20,7 @@ export default class extends BaseSchema {
       table.timestamp('published_at', { useTz: true }).nullable()
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
+      table.index('slug')
     })
   }
 

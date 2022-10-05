@@ -20,6 +20,7 @@
     "@adonisjs/bouncer": "^2.3.0",
     "@adonisjs/core": "^5.8.5",
     "@adonisjs/lucid": "^18.1.0",
+    "@adonisjs/lucid-slugify": "^2.2.1",
     "@adonisjs/redis": "^7.3.1",
     "@adonisjs/repl": "^3.1.11",
     "luxon": "^3.0.1",
