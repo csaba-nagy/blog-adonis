@@ -6,12 +6,38 @@ export default class extends BaseSeeder {
     // It creates one admin account with the specified data
     await UserFactory.merge({
       // Override the default values what are declared in UserFactory
-      firstName: 'Csaba',
-      lastName: 'Nagy',
-      email: 'admin@email.com',
+      firstName: 'Test',
+      lastName: 'Admin',
+      email: 'testadmin@email.com',
       password: '!Password11',
     })
       .apply('role.admin')
+      .apply('status.active')
+      .with('profile')
+      .with('posts', 1, post => post.apply('category.web_development').apply('state.public'))
+      .create()
+
+    await UserFactory.merge({
+      // Override the default values what are declared in UserFactory
+      firstName: 'Test',
+      lastName: 'Author',
+      email: 'testauthor@email.com',
+      password: '!Password11',
+    })
+      .apply('role.author')
+      .apply('status.active')
+      .with('profile')
+      .with('posts', 1)
+      .with('posts', 10, post => post.apply('category.web_development').apply('state.public'))
+      .create()
+
+    await UserFactory.merge({
+      // Override the default values what are declared in UserFactory
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'testuser@email.com',
+      password: '!Password11',
+    })
       .apply('status.active')
       .with('profile')
       .create()
