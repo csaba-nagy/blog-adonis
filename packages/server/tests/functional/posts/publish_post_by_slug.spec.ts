@@ -2,7 +2,12 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { PostState, StatusCodes } from 'App/Enums'
 import { Post, User } from 'App/Models'
-import { DB_CONNECTION, POSTS_PATH_PREFIX, TEST_AUTHOR_ID, TEST_USER_ID } from '../../constantsForTests'
+import {
+  DB_CONNECTION,
+  POSTS_PATH_PREFIX,
+  TEST_AUTHOR_ID,
+  TEST_USER_ID,
+} from 'Shared/const'
 
 test.group('PATCH /posts/:slug/publish', (group) => {
   group.each.setup(async () => {

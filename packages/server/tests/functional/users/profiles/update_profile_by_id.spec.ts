@@ -2,7 +2,12 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH, USER_PROFILE_PATH_WITH_ID } from '../../../constantsForTests'
+import {
+  DB_CONNECTION,
+  TEST_ADMIN_ID,
+  USER_PROFILE_PATH,
+  USER_PROFILE_PATH_WITH_USER_ID,
+} from 'Shared/const'
 
 test.group('PATCH /profile/:id', (group) => {
   group.each.setup(async () => {
@@ -18,10 +23,10 @@ test.group('PATCH /profile/:id', (group) => {
         biography: 'lorem ipsum dolor sit amet',
       }
 
-      const preUpdateData = await client.get(USER_PROFILE_PATH_WITH_ID)
+      const preUpdateData = await client.get(USER_PROFILE_PATH_WITH_USER_ID)
       const { updated_at } = preUpdateData.body()
 
-      const response = await client.patch(USER_PROFILE_PATH_WITH_ID)
+      const response = await client.patch(USER_PROFILE_PATH_WITH_USER_ID)
         .json(payload)
         .guard('api')
         .loginAs(user)
@@ -39,7 +44,7 @@ test.group('PATCH /profile/:id', (group) => {
         biography: 'lorem ipsum dolor sit amet',
       }
 
-      const response = await client.patch(USER_PROFILE_PATH_WITH_ID).json(updateProfileData)
+      const response = await client.patch(USER_PROFILE_PATH_WITH_USER_ID).json(updateProfileData)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 

@@ -3,7 +3,7 @@ import { test } from '@japa/runner'
 import { UserProfile } from 'App/Models'
 import UserProfilePolicy from 'App/Policies/UserProfilePolicy'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID } from '../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID } from 'Shared/const'
 
 test.group('Policies: Update user profile by id', () => {
   test('it should return false if the user is not admin', async ({ assert }) => {

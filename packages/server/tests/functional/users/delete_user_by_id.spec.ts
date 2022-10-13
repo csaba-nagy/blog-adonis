@@ -3,8 +3,13 @@ import { test } from '@japa/runner'
 import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH, USER_ACCOUNT_PATH_WITH_ID, USER_PROFILE_PATH }
-  from '../../constantsForTests'
+import {
+  DB_CONNECTION,
+  TEST_ADMIN_ID,
+  USER_ACCOUNT_PATH,
+  USER_ACCOUNT_PATH_WITH_USER_ID,
+  USER_PROFILE_PATH,
+} from 'Shared/const'
 
 test.group('DELETE /users/:id', (group) => {
   group.each.setup(async () => {
@@ -47,7 +52,7 @@ test.group('DELETE /users/:id', (group) => {
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.delete(USER_ACCOUNT_PATH_WITH_ID)
+      const response = await client.delete(USER_ACCOUNT_PATH_WITH_USER_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 

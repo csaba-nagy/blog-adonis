@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { AUTH_LOGOUT_PATH, DB_CONNECTION, TEST_ADMIN_ID } from '../../constantsForTests'
+import { AUTH_LOGOUT_PATH, DB_CONNECTION, TEST_ADMIN_ID } from 'Shared/const'
 
 test.group('GET /auth/logout', (group) => {
   group.each.setup(async () => {

@@ -2,7 +2,12 @@ import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, TEST_ADMIN_ID, USERS_PATH_PREFIX, USER_PROFILE_PATH } from '../../constantsForTests'
+import {
+  DB_CONNECTION,
+  TEST_ADMIN_ID,
+  USERS_PATH_PREFIX,
+  USER_PROFILE_PATH,
+} from 'Shared/const'
 
 test.group('POST /users', (group) => {
   group.each.setup(async () => {
