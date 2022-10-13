@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import UserFactory from 'Database/factories/UserFactory'
-import { AUTH_LOGIN_PATH, DB_CONNECTION } from '../../constantsForTests'
+import { AUTH_LOGIN_PATH, DB_CONNECTION } from 'Shared/const'
 
 test.group('POST /auth/login', (group) => {
   group.each.setup(async () => {

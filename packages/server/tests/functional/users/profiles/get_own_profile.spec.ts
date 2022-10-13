@@ -3,7 +3,7 @@ import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User, UserProfile } from 'App/Models'
 import { string } from '@ioc:Adonis/Core/Helpers'
-import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH } from '../../../constantsForTests'
+import { DB_CONNECTION, TEST_ADMIN_ID, USER_PROFILE_PATH } from 'Shared/const'
 
 test.group('GET /profile', (group) => {
   group.each.setup(async () => {

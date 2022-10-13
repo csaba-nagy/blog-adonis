@@ -1,12 +1,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 import { RequestMethods } from 'App/Enums'
-import { API_BASE_ROUTE, API_VERSION, POSTS_PATH } from './constants'
-
-export const postApiEndPoints = {
-  posts: '/',
-  postBySlug: '/:slug',
-  publish: '/:slug/publish',
-}
+import { API_BASE_ROUTE, API_VERSION, POSTS_PATH } from 'Shared/const'
+import { postApiEndPoints } from './const'
 
 export const postRoutes = Route.group(() => {
   Route.group(() => {

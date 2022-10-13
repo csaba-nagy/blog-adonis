@@ -1,12 +1,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 import { RequestMethods } from 'App/Enums'
-import { API_BASE_ROUTE, API_VERSION, USERS_PATH } from './constants'
-
-export const userApiEndPoints = {
-  users: '/',
-  account: '/account',
-  accountById: '/account/:id',
-}
+import { API_BASE_ROUTE, API_VERSION, USERS_PATH } from 'Shared/const'
+import { userApiEndPoints } from './const'
 
 export const userRoutes = Route.group(() => {
   Route.group(() => {

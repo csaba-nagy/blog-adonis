@@ -4,8 +4,13 @@ import { StatusCodes, UserRole } from 'App/Enums'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
-import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH, USER_ACCOUNT_PATH_WITH_ID }
-  from '../../constantsForTests'
+import {
+  DB_CONNECTION,
+  TEST_ADMIN_ID,
+  TEST_USER_ID,
+  USER_ACCOUNT_PATH,
+  USER_ACCOUNT_PATH_WITH_USER_ID,
+} from 'Shared/const'
 
 test.group('GET /users/:id', (group) => {
   group.each.setup(async () => {
@@ -26,7 +31,7 @@ test.group('GET /users/:id', (group) => {
       assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
 
       const response = await client
-        .get(USER_ACCOUNT_PATH_WITH_ID)
+        .get(USER_ACCOUNT_PATH_WITH_USER_ID)
         .guard('api')
         .loginAs(user)
 
@@ -36,12 +41,12 @@ test.group('GET /users/:id', (group) => {
 
       assert.notProperty(response.body(), 'password')
 
-      assert.propertyVal(response.body(), 'id', TEST_ADMIN_ID)
+      assert.propertyVal(response.body(), 'id', TEST_USER_ID)
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.get(USER_ACCOUNT_PATH_WITH_ID)
+      const response = await client.get(USER_ACCOUNT_PATH_WITH_USER_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 

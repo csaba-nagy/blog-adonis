@@ -12,12 +12,14 @@
     "App": "app",
     "Config": "config",
     "Database": "database",
-    "Contracts": "contracts"
+    "Contracts": "contracts",
+    "Shared": "shared"
   },
   "preloads": [
     "./start/routes",
     "./start/kernel",
-    "./start/bouncer"
+    "./start/bouncer",
+    "./shared/const"
   ],
   "providers": [
     "./providers/AppProvider",

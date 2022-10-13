@@ -6,9 +6,10 @@ import { string } from '@ioc:Adonis/Core/Helpers'
 import {
   DB_CONNECTION,
   TEST_ADMIN_ID,
+  TEST_USER_ID,
   USER_PROFILE_PATH,
-  USER_PROFILE_PATH_WITH_ID,
-} from '../../../constantsForTests'
+  USER_PROFILE_PATH_WITH_USER_ID,
+} from 'Shared/const'
 
 test.group('GET /profile/:id', (group) => {
   group.each.setup(async () => {
@@ -19,6 +20,7 @@ test.group('GET /profile/:id', (group) => {
   test('it should return a valid user profile if the user is authenticated',
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
+
       const userProfile = await UserProfile.findByOrFail('user_id', user.id)
 
       // need to convert the given camelCase property names to snake_case
@@ -27,19 +29,19 @@ test.group('GET /profile/:id', (group) => {
         .map(prop => string.snakeCase(prop))
 
       const response = await client
-        .get(USER_PROFILE_PATH_WITH_ID)
+        .get(USER_PROFILE_PATH_WITH_USER_ID)
         .guard('api')
         .loginAs(user)
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.propertyVal(response.body(), 'user_id', TEST_ADMIN_ID)
+      assert.propertyVal(response.body(), 'user_id', TEST_USER_ID)
       assert.properties(response.body(), userProfileProperties)
     })
 
   test('it should return an error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.get(USER_PROFILE_PATH_WITH_ID)
+      const response = await client.get(USER_PROFILE_PATH_WITH_USER_ID)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
