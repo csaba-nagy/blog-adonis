@@ -19,7 +19,7 @@ test.group('DELETE /posts/:slug', (group) => {
   test('it should delete the post if it is not public and the logged user is the author of the post',
     async ({ client, assert }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
-      const { slug, state } = await Post.findByOrFail('author_id', author.id)
+      const { slug, state } = await Post.findByOrFail('user_id', author.id)
 
       assert.strictEqual(state, PostState.DRAFT)
 
@@ -44,7 +44,7 @@ test.group('DELETE /posts/:slug', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', TEST_AUTHOR_ID)
+        .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
         .limit(1)
 
@@ -68,7 +68,7 @@ test.group('DELETE /posts/:slug', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', TEST_AUTHOR_ID)
+        .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
         .limit(1)
 
@@ -86,7 +86,7 @@ test.group('DELETE /posts/:slug', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', TEST_AUTHOR_ID)
+        .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
         .limit(1)
 

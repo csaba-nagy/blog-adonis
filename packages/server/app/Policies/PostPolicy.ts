@@ -14,15 +14,15 @@ export default class PostPolicy extends BasePolicy {
       if (!user)
         return false
 
-      return post.authorId === user.id
+      return post.userId === user.id
     }
 
   public updatePost = async (user: User, post: Post) =>
-    post.state !== PostState.PUBLIC && post.authorId === user.id
+    post.state !== PostState.PUBLIC && post.userId === user.id
 
   public deletePost = async (user: User, post: Post) =>
-    post.state !== PostState.PUBLIC && post.authorId === user.id
+    post.state !== PostState.PUBLIC && post.userId === user.id
 
   public publishPost = async (user: User, post: Post) =>
-    post.state !== PostState.PUBLIC && post.authorId === user.id
+    post.state !== PostState.PUBLIC && post.userId === user.id
 }

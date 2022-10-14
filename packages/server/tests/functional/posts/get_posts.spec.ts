@@ -43,6 +43,6 @@ test.group('GET /posts', (group) => {
 
     response.assertStatus(StatusCodes.OK)
 
-    response.body().forEach(post => assert.equal(post.author_id, TEST_AUTHOR_ID))
+    response.body().forEach(post => assert.equal(post.user_id, TEST_AUTHOR_ID))
   })
 })

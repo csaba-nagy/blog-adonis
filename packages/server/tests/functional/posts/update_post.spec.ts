@@ -23,7 +23,7 @@ test.group('PATCH /posts', (group) => {
         body: 'updated test body text',
       }
 
-      const { state, updatedAt, slug } = await Post.findByOrFail('author_id', author.id)
+      const { state, updatedAt, slug } = await Post.findByOrFail('user_id', author.id)
 
       const response = await client
         .patch(`${POSTS_PATH_PREFIX}/${slug}`)
@@ -42,7 +42,7 @@ test.group('PATCH /posts', (group) => {
 
   test('it should return an error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client, assert }) => {
-      const { state, slug } = await Post.findByOrFail('author_id', TEST_AUTHOR_ID)
+      const { state, slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
 
       const response = await client.patch(`${POSTS_PATH_PREFIX}/${slug}`).json({})
 
@@ -58,7 +58,7 @@ test.group('PATCH /posts', (group) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
       const posts = await Post
         .query()
-        .where('author_id', '=', TEST_AUTHOR_ID)
+        .where('user_id', '=', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
         .limit(1)
 
@@ -76,7 +76,7 @@ test.group('PATCH /posts', (group) => {
 
   test('it should return an error (403 FORBIDDEN) if the logged USER tries to update a post',
     async ({ client }) => {
-      const { slug } = await Post.findByOrFail('author_id', TEST_AUTHOR_ID)
+      const { slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
 
       const user = await User.findOrFail(TEST_USER_ID)
 
@@ -93,7 +93,7 @@ test.group('PATCH /posts', (group) => {
   test('it should return validation error if some of the given data not valid',
     async ({ client, assert }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
-      const { slug } = await Post.findByOrFail('author_id', author.id)
+      const { slug } = await Post.findByOrFail('user_id', author.id)
 
       const optionalProperties = [
         'pageTitle',

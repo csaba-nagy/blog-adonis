@@ -30,7 +30,7 @@ export default class Post extends BaseModel {
   public category: PostCategory
 
   @column()
-  public authorId: number
+  public userId: number
 
   @column()
   public description: string
@@ -70,7 +70,7 @@ export default class Post extends BaseModel {
   })
 
   public static visibleTo = scope((query: ModelQueryBuilderContract<typeof Post>, user: User) => {
-    query.where('author_id', user.id)
+    query.where('user_id', user.id)
     query.withScopes(scopes => scopes.orderedByPublicationDate())
   })
 

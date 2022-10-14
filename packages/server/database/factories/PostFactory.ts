@@ -6,7 +6,7 @@ export default Factory.define(Post, ({ faker }) => {
   return {
     pageTitle: faker.lorem.sentence(),
     title: faker.lorem.sentence(),
-    authorId: 1,
+    userId: 1,
     category: PostCategory.AFK,
     description: faker.lorem.paragraph(),
     metaDescription: faker.lorem.paragraph(),

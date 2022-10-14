@@ -4,7 +4,7 @@ import { Post } from 'App/Models'
 
 export default class PostsRepository {
   private selectFields = (
-    requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at'],
+    requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'user_id', 'published_at'],
   ) => Post.query().select(...requestedData)
 
   public getPublicPosts = () =>

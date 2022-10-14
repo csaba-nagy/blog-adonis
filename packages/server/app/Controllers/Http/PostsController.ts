@@ -14,7 +14,7 @@ export default class PostsController {
 
     const validatedPayload = await request.validate(CreatePostValidator)
 
-    const createdPost = await this.repository.createPost({ authorId: auth.user!.id, ...validatedPayload })
+    const createdPost = await this.repository.createPost({ userId: auth.user!.id, ...validatedPayload })
 
     return response.created(createdPost)
   }

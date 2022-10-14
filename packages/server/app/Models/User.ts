@@ -39,7 +39,7 @@ export default class User extends BaseModel {
   public profile: HasOne<typeof UserProfile>
 
   @hasMany(() => Post, {
-    foreignKey: 'authorId',
+    foreignKey: 'userId',
   })
   public posts: HasMany<typeof Post>
 

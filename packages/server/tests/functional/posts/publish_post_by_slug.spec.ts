@@ -21,7 +21,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', '=', author.id)
+        .where('user_id', '=', author.id)
         .andWhere('state', '=', PostState.DRAFT)
         .limit(1)
 
@@ -42,7 +42,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', '=', author.id)
+        .where('user_id', '=', author.id)
         .andWhere('state', '=', PostState.PUBLIC)
         .limit(1)
 
@@ -63,7 +63,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
 
       const posts = await Post
         .query()
-        .where('author_id', '=', TEST_AUTHOR_ID)
+        .where('user_id', '=', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.DRAFT)
         .limit(1)
 
@@ -82,7 +82,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
     async ({ client }) => {
       const posts = await Post
         .query()
-        .where('author_id', '=', TEST_AUTHOR_ID)
+        .where('user_id', '=', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.DRAFT)
         .limit(1)
 
