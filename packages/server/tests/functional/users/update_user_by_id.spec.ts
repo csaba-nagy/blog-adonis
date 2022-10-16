@@ -2,7 +2,6 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes, UserRole, UserStatus } from 'App/Enums'
 import { User } from 'App/Models'
-import { string } from '@ioc:Adonis/Core/Helpers'
 import UserFactory from 'Database/factories/UserFactory'
 import {
   DB_CONNECTION,
@@ -21,9 +20,7 @@ test.group('PATCH /users/:id', (group) => {
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 TEST_USER is admin by default
 
-      const userProperties = Object.getOwnPropertyNames(user.$attributes)
-        .filter(prop => prop !== 'password') // 👈 We do not need the password property
-        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
+      const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
 
       const payload = {
         firstName: 'John',
@@ -50,7 +47,7 @@ test.group('PATCH /users/:id', (group) => {
       assert.notPropertyVal(response.body(), 'updated_at', updated_at)
       assert.properties(
         response.body(),
-        userProperties,
+        expectedUserProperties,
       )
 
       assert.notProperty(response.body(), 'password')
@@ -60,8 +57,7 @@ test.group('PATCH /users/:id', (group) => {
         .guard('api')
         .loginAs(user)
 
-      assert.propertyVal(getUpdatedUser.body(), 'first_name', payload.firstName)
-      assert.propertyVal(getUpdatedUser.body(), 'last_name', payload.lastName)
+      assert.propertyVal(getUpdatedUser.body(), 'name', `${payload.firstName} ${payload.lastName}`)
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',

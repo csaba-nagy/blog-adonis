@@ -9,13 +9,13 @@ export default class PostsRepository {
 
   public getPublicPosts = () =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()))
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()).preload('user'))
 
   public getAllPostsAsAuthor = (author: User) =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.visibleTo(author)))
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.visibleTo(author)).preload('user'))
 
-  public getPostBySlug = (slug: string) => Post.findByOrFail('slug', slug)
+  public getPostBySlug = async (slug: string) => Post.query().where('slug', '=', slug).preload('user')
 
   public createPost = payload =>
     Database.transaction(trx => Post.create(payload, { client: trx }))

@@ -17,11 +17,14 @@ test.group('DELETE /posts/:slug', (group) => {
   })
 
   test('it should delete the post if it is not public and the logged user is the author of the post',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
-      const { slug, state } = await Post.findByOrFail('user_id', author.id)
 
-      assert.strictEqual(state, PostState.DRAFT)
+      const { slug } = (await Post
+        .query()
+        .where('user_id', '=', author.id)
+        .andWhere('state', '=', PostState.DRAFT)
+        .limit(1))[0]
 
       const response = await client
         .delete(`${POSTS_PATH_PREFIX}/${slug}`)
@@ -42,13 +45,11 @@ test.group('DELETE /posts/:slug', (group) => {
     async ({ client }) => {
       const admin = await User.findOrFail(TEST_ADMIN_ID)
 
-      const posts = await Post
+      const { slug } = (await Post
         .query()
         .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
-        .limit(1)
-
-      const { slug } = posts[0]
+        .limit(1))[0]
 
       const response = await client.delete(`${POSTS_PATH_PREFIX}/${slug}`).guard('api').loginAs(admin)
 
@@ -66,13 +67,11 @@ test.group('DELETE /posts/:slug', (group) => {
     async ({ client }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
 
-      const posts = await Post
+      const { slug } = (await Post
         .query()
         .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
-        .limit(1)
-
-      const { slug } = posts[0]
+        .limit(1))[0]
 
       const response = await client.delete(`${POSTS_PATH_PREFIX}/${slug}`).guard('api').loginAs(author)
 
@@ -84,13 +83,11 @@ test.group('DELETE /posts/:slug', (group) => {
     async ({ client }) => {
       const user = await User.findOrFail(TEST_USER_ID)
 
-      const posts = await Post
+      const { slug } = (await Post
         .query()
         .where('user_id', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.PUBLIC)
-        .limit(1)
-
-      const { slug } = posts[0]
+        .limit(1))[0]
 
       const response = await client.delete(`${POSTS_PATH_PREFIX}/${slug}`).guard('api').loginAs(user)
 

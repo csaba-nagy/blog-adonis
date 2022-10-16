@@ -6,7 +6,6 @@ import {
   DB_CONNECTION,
   TEST_ADMIN_ID,
   USERS_PATH_PREFIX,
-  USER_PROFILE_PATH,
 } from 'Shared/const'
 
 test.group('POST /users', (group) => {
@@ -23,10 +22,9 @@ test.group('POST /users', (group) => {
       password: '!Password11',
     }
 
-    const requiredProperties = ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at']
+    const requiredProperties = ['name', 'profile', 'account']
 
     const response = await client.post(USERS_PATH_PREFIX).json(payload)
-    const { id } = response.body()
 
     response.assertStatus(StatusCodes.CREATED)
 
@@ -35,13 +33,11 @@ test.group('POST /users', (group) => {
     assert.notProperty(response.body(), 'password')
 
     const responseToGetCreatedProfile = await client
-      .get(`${USER_PROFILE_PATH}/${id}`)
+      .get(response.body().profile)
       .guard('api')
       .loginAs(await User.findOrFail(TEST_ADMIN_ID))
 
     responseToGetCreatedProfile.assertStatus(StatusCodes.OK)
-
-    assert.propertyVal(responseToGetCreatedProfile.body(), 'user_id', id)
   })
 
   test('it should return error (422 UNPROCESSABLE_ENTITY) if the given email is already registered in the database',

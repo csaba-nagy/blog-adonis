@@ -10,7 +10,7 @@ export default class UsersController {
     const payload = await request.validate(CreateUserValidator)
     const user = await this.repository.createUser(payload)
 
-    return response.created(user)
+    return response.created(user.serialize(this.getUserDataSerializationOptions('create')))
   }
 
   public getAllUsers = async ({ bouncer, response }: HttpContextContract) => {
@@ -18,7 +18,7 @@ export default class UsersController {
 
     const users = await this.repository.getUsers()
 
-    return response.ok(users)
+    return response.ok(users.map(user => user.serialize(this.getUserDataSerializationOptions('getAll'))))
   }
 
   public getUserById = async ({ bouncer, request, response }: HttpContextContract) => {
@@ -26,13 +26,13 @@ export default class UsersController {
 
     const user = await this.repository.getUserById(request.param('id'))
 
-    return response.ok(user)
+    return response.ok(user.serialize(this.getUserDataSerializationOptions('getOne')))
   }
 
   public getUserAccount = async ({ auth, response }: HttpContextContract) => {
     const user = await this.repository.getUserById(auth.user!.id)
 
-    return response.ok(user)
+    return response.ok(user.serialize(this.getUserDataSerializationOptions('getOne')))
   }
 
   public updateUserById = async ({ bouncer, request, response }: HttpContextContract) => {
@@ -46,7 +46,7 @@ export default class UsersController {
 
     const updatedUser = await this.repository.updateUser(payload)
 
-    return response.ok(updatedUser)
+    return response.ok(updatedUser.serialize(this.getUserDataSerializationOptions('getOne')))
   }
 
   public updateUser = async ({ auth, request, response }: HttpContextContract) => {
@@ -59,7 +59,7 @@ export default class UsersController {
 
     const updatedUser = await this.repository.updateUser(payload)
 
-    return response.ok(updatedUser)
+    return response.ok(updatedUser.serialize(this.getUserDataSerializationOptions('getOne')))
   }
 
   public deleteUserById = async ({ bouncer, request, response }: HttpContextContract) => {
@@ -74,5 +74,28 @@ export default class UsersController {
     await this.repository.deleteUser(auth.user!.id)
 
     return response.status(StatusCodes.OK)
+  }
+
+  private getUserDataSerializationOptions = (method: 'create' | 'getAll' | 'getOne') => {
+    if (method === 'create') {
+      return {
+        fields: {
+          pick: ['name', 'profile', 'account'],
+        },
+      }
+    }
+
+    if (method === 'getAll') {
+      return {
+        fields: {
+          omit: ['created_at', 'updated_at'],
+        },
+      }
+    }
+    return {
+      fields: {
+        omit: ['account'],
+      },
+    }
   }
 }

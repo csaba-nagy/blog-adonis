@@ -39,10 +39,12 @@ test.group('GET /posts', (group) => {
   test('it should return all posts of the logged author', async ({ client, assert }) => {
     const author = await User.findOrFail(TEST_AUTHOR_ID)
 
+    const { name: authorName } = author.serialize()
+
     const response = await client.get(POSTS_PATH_PREFIX).guard('api').loginAs(author)
 
     response.assertStatus(StatusCodes.OK)
 
-    response.body().forEach(post => assert.equal(post.user_id, TEST_AUTHOR_ID))
+    response.body().forEach(post => assert.equal(post.author.name, authorName))
   })
 })

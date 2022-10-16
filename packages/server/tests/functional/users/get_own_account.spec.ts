@@ -2,7 +2,6 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { string } from '@ioc:Adonis/Core/Helpers'
 import { DB_CONNECTION, TEST_ADMIN_ID, USER_ACCOUNT_PATH } from 'Shared/const'
 
 test.group('GET /account', (group) => {
@@ -15,10 +14,7 @@ test.group('GET /account', (group) => {
     async ({ client, assert }) => {
       const userToAuth = await User.findOrFail(TEST_ADMIN_ID)
 
-      const userProperties = Object
-        .getOwnPropertyNames(userToAuth.$attributes)
-        .filter(prop => prop !== 'password') // 👈 We do not need the password property
-        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
+      const expectedUserProperties = ['created_at', 'email', 'id', 'name', 'profile', 'role', 'status', 'updated_at']
 
       const response = await client
         .get(USER_ACCOUNT_PATH)
@@ -26,7 +22,7 @@ test.group('GET /account', (group) => {
         .loginAs(userToAuth)
 
       response.assertStatus(StatusCodes.OK)
-      assert.properties(response.body(), userProperties)
+      assert.properties(response.body(), expectedUserProperties)
       assert.notProperty(response.body(), 'password')
     })
 
