@@ -13,7 +13,7 @@ export default class UserProfilesController {
 
     await bouncer.with('UserProfilePolicy').authorize('viewOwnProfile', profile)
 
-    return response.ok(profile)
+    return response.ok(profile.serialize(this.getProfileSerializationOptions()))
   }
 
   public getUserProfileById = async ({ bouncer, request, response }: HttpContextContract) => {
@@ -21,7 +21,7 @@ export default class UserProfilesController {
 
     const profile = await this.repository.getUserProfile(request.param('id'))
 
-    return response.ok(profile)
+    return response.ok(profile.serialize(this.getProfileSerializationOptions()))
   }
 
   public updateUserProfile = async ({ auth, bouncer, request, response }: HttpContextContract) => {
@@ -41,7 +41,7 @@ export default class UserProfilesController {
     }
     const updatedProfile = await this.repository.updateUserProfile(payload)
 
-    return response.ok(updatedProfile)
+    return response.ok(updatedProfile.serialize(this.getProfileSerializationOptions()))
   }
 
   public updateUserProfileById = async ({ bouncer, request, response }: HttpContextContract) => {
@@ -58,6 +58,14 @@ export default class UserProfilesController {
 
     const updatedProfile = await this.repository.updateUserProfile(payload)
 
-    response.ok(updatedProfile)
+    response.ok(updatedProfile.serialize(this.getProfileSerializationOptions()))
+  }
+
+  private getProfileSerializationOptions = () => {
+    return {
+      fields: {
+        omit: ['id', 'created_at'],
+      },
+    }
   }
 }
