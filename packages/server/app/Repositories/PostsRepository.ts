@@ -4,18 +4,23 @@ import { Post } from 'App/Models'
 
 export default class PostsRepository {
   private selectFields = (
-    requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'author_id', 'published_at'],
+    requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'user_id', 'published_at'],
   ) => Post.query().select(...requestedData)
 
-  public getPublicPosts = () =>
+  public getPublicPosts = (page: number, limit: number) =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()))
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()).preload('user').paginate(page, limit))
 
-  public getAllPostsAsAuthor = (author: User) =>
+  public getAllPostsAsAuthor = (author: User, page: number, limit: number) =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.visibleTo(author)))
+      this
+        .selectFields()
+        .useTransaction(trx)
+        .withScopes(scopes => scopes.visibleTo(author))
+        .preload('user')
+        .paginate(page, limit))
 
-  public getPostBySlug = (slug: string) => Post.findByOrFail('slug', slug)
+  public getPostBySlug = async (slug: string) => Post.query().where('slug', '=', slug).preload('user')
 
   public createPost = payload =>
     Database.transaction(trx => Post.create(payload, { client: trx }))

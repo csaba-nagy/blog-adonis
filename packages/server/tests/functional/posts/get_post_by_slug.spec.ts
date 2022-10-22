@@ -43,7 +43,7 @@ test.group('GET /posts/:slug', (group) => {
     async ({ client, assert }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
       const post = await Post.query()
-        .where('author_id', '=', TEST_AUTHOR_ID)
+        .where('user_id', '=', TEST_AUTHOR_ID)
         .andWhere('state', '=', PostState.DRAFT)
         .limit(1)
 
@@ -57,7 +57,7 @@ test.group('GET /posts/:slug', (group) => {
 
   test('it should return an error (403 FORBIDDEN) if the blog post is not visible and the user is not logged in',
     async ({ client }) => {
-      const { slug } = await Post.findByOrFail('author_id', TEST_AUTHOR_ID)
+      const { slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
 
       const response = await client.get(`${POSTS_PATH_PREFIX}/${slug}`)
 
@@ -67,7 +67,7 @@ test.group('GET /posts/:slug', (group) => {
 
   test('it should return an error (403 FORBIDDEN) if the user is logged in but the post is not visible',
     async ({ client }) => {
-      const { slug } = await Post.findByOrFail('author_id', TEST_AUTHOR_ID)
+      const { slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
       const user = await User.findOrFail(TEST_USER_ID)
 
       const response = await client.get(`${POSTS_PATH_PREFIX}/${slug}`).guard('api').loginAs(user)

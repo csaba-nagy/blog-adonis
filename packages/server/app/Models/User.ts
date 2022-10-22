@@ -1,9 +1,10 @@
 import type { DateTime } from 'luxon'
 import type { HasMany, HasOne } from '@ioc:Adonis/Lucid/Orm'
-import { BaseModel, beforeSave, column, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, beforeSave, column, computed, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import type { UserRole, UserStatus } from 'App/Enums'
 import { Comment, Post, UserProfile } from 'App/Models'
+import { DOMAIN, USER_ACCOUNT_PATH, USER_PROFILE_PATH } from 'Shared/const'
 
 export default class User extends BaseModel {
   public static table = 'users'
@@ -11,11 +12,26 @@ export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column()
+  @computed({ serializeAs: 'profile' })
+  public get profileLink() {
+    return `${DOMAIN}${USER_PROFILE_PATH}/${this.id}`
+  }
+
+  @computed({ serializeAs: 'account' })
+  public get accountLink() {
+    return `${DOMAIN}${USER_ACCOUNT_PATH}/${this.id}`
+  }
+
+  @column({ serializeAs: null })
   public firstName: string
 
-  @column()
+  @column({ serializeAs: null })
   public lastName: string
+
+  @computed({ serializeAs: 'name' })
+  public get fullName() {
+    return `${this.firstName} ${this.lastName}`
+  }
 
   @column()
   public email: string
@@ -29,17 +45,24 @@ export default class User extends BaseModel {
   @column()
   public status: UserStatus
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({
+    autoCreate: true,
+    serialize: (value: DateTime | null) => value ? value.setZone('utc').toISO() : value,
+  })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({
+    autoCreate: true,
+    autoUpdate: true,
+    serialize: (value: DateTime | null) => value ? value.setZone('utc').toISO() : value,
+  })
   public updatedAt: DateTime
 
   @hasOne(() => UserProfile)
   public profile: HasOne<typeof UserProfile>
 
   @hasMany(() => Post, {
-    foreignKey: 'authorId',
+    foreignKey: 'userId',
   })
   public posts: HasMany<typeof Post>
 

@@ -5,6 +5,7 @@ import { PostsRepository } from 'App/Repositories'
 import { CreatePostValidator, UpdatePostValidator } from 'App/Validators'
 import { DateTime } from 'luxon'
 import { schema, validator } from '@ioc:Adonis/Core/Validator'
+import type { Post } from 'App/Models'
 
 export default class PostsController {
   constructor(private repository = new PostsRepository()) {}
@@ -14,27 +15,38 @@ export default class PostsController {
 
     const validatedPayload = await request.validate(CreatePostValidator)
 
-    const createdPost = await this.repository.createPost({ authorId: auth.user!.id, ...validatedPayload })
+    const createdPost = await this.repository.createPost({ userId: auth.user!.id, ...validatedPayload })
 
     return response.created(createdPost)
   }
 
   public getPostBySlug = async ({ bouncer, request, response }: HttpContextContract) => {
-    const post = await this.repository.getPostBySlug(request.param('slug'))
+    const post: Post | undefined = (await this.repository.getPostBySlug(request.param('slug')))[0]
+
+    if (!post)
+      return response.notFound()
 
     await bouncer.with('PostPolicy').authorize('getPostBySlug', post)
 
-    return response.ok(post)
+    return response.ok(post.serialize(this.getPostSerializationOptions('by_slug')))
   }
 
-  public getPosts = async ({ auth, response }: HttpContextContract) => {
-    return auth.isGuest || auth.user?.role === UserRole.USER
-      ? response.ok(await this.repository.getPublicPosts())
-      : response.ok(await this.repository.getAllPostsAsAuthor(auth.user!))
+  public getPosts = async ({ auth, request, response }: HttpContextContract) => {
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 5)
+
+    const posts = auth.isGuest || auth.user?.role === UserRole.USER
+      ? await this.repository.getPublicPosts(page, limit)
+      : await this.repository.getAllPostsAsAuthor(auth.user!, page, limit)
+
+    return response.ok(posts.serialize(this.getPostSerializationOptions('all')))
   }
 
   public updatePost = async ({ bouncer, request, response }: HttpContextContract) => {
-    const postToUpdate = await this.repository.getPostBySlug(request.param('slug'))
+    const postToUpdate: Post | undefined = (await this.repository.getPostBySlug(request.param('slug')))[0]
+
+    if (!postToUpdate)
+      return response.notFound()
 
     await bouncer.with('PostPolicy').authorize('updatePost', postToUpdate)
 
@@ -42,11 +54,14 @@ export default class PostsController {
 
     const updatedPost = await this.repository.updatePost(postToUpdate, validatedPayload)
 
-    return response.ok(updatedPost)
+    return response.ok(updatedPost.serialize(this.getPostSerializationOptions('by_slug')))
   }
 
   public deletePost = async ({ bouncer, request, response }: HttpContextContract) => {
-    const postToDelete = await this.repository.getPostBySlug(request.param('slug'))
+    const postToDelete: Post | undefined = (await this.repository.getPostBySlug(request.param('slug')))[0]
+
+    if (!postToDelete)
+      return response.notFound()
 
     await bouncer.with('PostPolicy').authorize('deletePost', postToDelete)
 
@@ -56,7 +71,10 @@ export default class PostsController {
   }
 
   public publishPost = async ({ bouncer, request, response }: HttpContextContract) => {
-    const postToPublish = await this.repository.getPostBySlug(request.param('slug'))
+    const postToPublish: Post | undefined = (await this.repository.getPostBySlug(request.param('slug')))[0]
+
+    if (!postToPublish)
+      return response.notFound()
 
     await bouncer.with('PostPolicy').authorize('publishPost', postToPublish)
 
@@ -72,6 +90,22 @@ export default class PostsController {
 
     const publishedPost = await this.repository.updatePost(postToPublish, payload)
 
-    return response.ok(publishedPost)
+    return response.ok(publishedPost.serialize(this.getPostSerializationOptions('by_slug')))
+  }
+
+  private getPostSerializationOptions = (method: 'all' | 'by_slug') => {
+    const isAll = method === 'all'
+    return {
+      fields: {
+        omit: isAll ? ['user_id'] : ['id', 'user_id', 'created_at'],
+      },
+      relations: {
+        author: {
+          fields: isAll
+            ? { pick: ['name', 'profile'] }
+            : { omit: ['created_at', 'updated_at'] },
+        },
+      },
+    }
   }
 }

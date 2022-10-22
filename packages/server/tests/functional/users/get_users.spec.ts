@@ -24,7 +24,7 @@ test.group('GET /users', (group) => {
       response.body().forEach((user) => {
         assert.properties(
           user,
-          ['id', 'first_name', 'last_name', 'email', 'role', 'status', 'created_at', 'updated_at'],
+          ['id', 'email', 'role', 'status', 'profile', 'account', 'name'],
         )
 
         assert.notProperty(user, 'password')

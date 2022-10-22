@@ -12,7 +12,7 @@ export default class Post extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column()
+  @column({ serialize: (value: string | null) => value ? `${value} | blog-adonis` : null })
   public pageTitle: string
 
   @column()
@@ -30,7 +30,7 @@ export default class Post extends BaseModel {
   public category: PostCategory
 
   @column()
-  public authorId: number
+  public userId: number
 
   @column()
   public description: string
@@ -47,16 +47,25 @@ export default class Post extends BaseModel {
   @column()
   public isFeatured: boolean
 
-  @column.dateTime()
+  @column.dateTime(
+    { serialize: (value: DateTime | null) => value?.setZone('utc').toRFC2822() },
+  )
   public publishedAt: DateTime | null
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({
+    autoCreate: true,
+    serialize: (value: DateTime | null) => value?.setZone('utc').toRFC2822(),
+  })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({
+    autoCreate: true,
+    autoUpdate: true,
+    serialize: (value: DateTime | null) => value?.setZone('utc').toRFC2822(),
+  })
   public updatedAt: DateTime
 
-  @belongsTo(() => User)
+  @belongsTo(() => User, { serializeAs: 'author' })
   public user: BelongsTo<typeof User>
 
   @manyToMany(() => Asset, {
@@ -70,7 +79,7 @@ export default class Post extends BaseModel {
   })
 
   public static visibleTo = scope((query: ModelQueryBuilderContract<typeof Post>, user: User) => {
-    query.where('author_id', user.id)
+    query.where('user_id', user.id)
     query.withScopes(scopes => scopes.orderedByPublicationDate())
   })
 

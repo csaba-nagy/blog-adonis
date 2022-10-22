@@ -30,7 +30,7 @@ test.group('POST /posts', (group) => {
       'title',
       'slug',
       'category',
-      'author_id',
+      'user_id',
       'description',
       'meta_description',
       'body',

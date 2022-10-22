@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { StatusCodes, UserRole } from 'App/Enums'
-import { string } from '@ioc:Adonis/Core/Helpers'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
 import {
@@ -22,10 +21,7 @@ test.group('GET /users/:id', (group) => {
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
 
-      const requiredUserProperties = Object
-        .getOwnPropertyNames(user.$attributes)
-        .filter(prop => prop !== 'password') // 👈 We do not need the password property
-        .map(prop => string.snakeCase(prop)) // 👈 Need to convert to snake_case
+      const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
 
       // Only the admin users can fire this action
       assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
@@ -37,7 +33,7 @@ test.group('GET /users/:id', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.properties(response.body(), requiredUserProperties)
+      assert.properties(response.body(), expectedUserProperties)
 
       assert.notProperty(response.body(), 'password')
 

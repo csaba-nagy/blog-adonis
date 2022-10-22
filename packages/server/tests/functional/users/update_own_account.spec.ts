@@ -36,7 +36,7 @@ test.group('PATCH /account', (group) => {
 
       assert.properties(
         response.body(),
-        ['id', 'first_name', 'last_name', 'email', 'created_at', 'updated_at'],
+        ['id', 'name', 'email', 'created_at', 'updated_at', 'role', 'status', 'profile'],
       )
 
       assert.notProperty(response.body(), 'password')
