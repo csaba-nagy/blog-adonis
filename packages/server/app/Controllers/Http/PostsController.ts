@@ -31,12 +31,15 @@ export default class PostsController {
     return response.ok(post.serialize(this.getPostSerializationOptions('by_slug')))
   }
 
-  public getPosts = async ({ auth, response }: HttpContextContract) => {
-    const posts = auth.isGuest || auth.user?.role === UserRole.USER
-      ? await this.repository.getPublicPosts()
-      : await this.repository.getAllPostsAsAuthor(auth.user!)
+  public getPosts = async ({ auth, request, response }: HttpContextContract) => {
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 5)
 
-    return response.ok(posts.map(post => post.serialize(this.getPostSerializationOptions('all'))))
+    const posts = auth.isGuest || auth.user?.role === UserRole.USER
+      ? await this.repository.getPublicPosts(page, limit)
+      : await this.repository.getAllPostsAsAuthor(auth.user!, page, limit)
+
+    return response.ok(posts.serialize(this.getPostSerializationOptions('all')))
   }
 
   public updatePost = async ({ bouncer, request, response }: HttpContextContract) => {

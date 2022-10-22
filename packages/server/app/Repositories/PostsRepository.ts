@@ -7,13 +7,18 @@ export default class PostsRepository {
     requestedData: string[] = ['title', 'slug', 'state', 'category', 'description', 'user_id', 'published_at'],
   ) => Post.query().select(...requestedData)
 
-  public getPublicPosts = () =>
+  public getPublicPosts = (page: number, limit: number) =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()).preload('user'))
+      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.published()).preload('user').paginate(page, limit))
 
-  public getAllPostsAsAuthor = (author: User) =>
+  public getAllPostsAsAuthor = (author: User, page: number, limit: number) =>
     Database.transaction(trx =>
-      this.selectFields().useTransaction(trx).withScopes(scopes => scopes.visibleTo(author)).preload('user'))
+      this
+        .selectFields()
+        .useTransaction(trx)
+        .withScopes(scopes => scopes.visibleTo(author))
+        .preload('user')
+        .paginate(page, limit))
 
   public getPostBySlug = async (slug: string) => Post.query().where('slug', '=', slug).preload('user')
 
