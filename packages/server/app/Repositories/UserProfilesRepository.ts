@@ -1,17 +1,11 @@
 import Database from '@ioc:Adonis/Lucid/Database'
+import type { ModelAdapterOptions } from '@ioc:Adonis/Lucid/Orm'
 import { UserProfile } from 'App/Models'
 
 export default class UserProfilesRepository {
-  public getUserProfile = async (userId: number) => await UserProfile.findByOrFail('user_id', userId)
+  public getUserProfileByUserId = (userId: number, options?: ModelAdapterOptions) =>
+    UserProfile.findByOrFail('user_id', userId, options)
 
-  public async updateUserProfile(profileDataWithUserId) {
-    return await Database.transaction(async (trx) => {
-      const { userId: id, data: profileData } = profileDataWithUserId
-      const profile = await UserProfile.findByOrFail('user_id', id, { client: trx })
-
-      return await profile.merge({
-        ...profileData,
-      }).save()
-    })
-  }
+  public updateUserProfile = (profile: UserProfile, payload) =>
+    Database.transaction(trx => profile.useTransaction(trx).merge(payload).save())
 }

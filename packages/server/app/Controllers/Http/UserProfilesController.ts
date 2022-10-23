@@ -9,7 +9,7 @@ export default class UserProfilesController {
   public getUserProfile = async ({ auth, bouncer, response }: HttpContextContract) => {
     const { id } = await auth.user!
 
-    const profile = await this.repository.getUserProfile(id)
+    const profile = await this.repository.getUserProfileByUserId(id)
 
     await bouncer.with('UserProfilePolicy').authorize('viewOwnProfile', profile)
 
@@ -19,7 +19,7 @@ export default class UserProfilesController {
   public getUserProfileById = async ({ bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('UserProfilePolicy').authorize('viewProfileById')
 
-    const profile = await this.repository.getUserProfile(request.param('id'))
+    const profile = await this.repository.getUserProfileByUserId(request.param('id'))
 
     return response.ok(profile.serialize(this.getProfileSerializationOptions()))
   }
@@ -27,19 +27,14 @@ export default class UserProfilesController {
   public updateUserProfile = async ({ auth, bouncer, request, response }: HttpContextContract) => {
     const { id } = auth.user!
 
-    // It is necessary because of authorization
-    const profile = await this.repository.getUserProfile(id)
+    // Need to query here for checking authorization 👇
+    const profile = await this.repository.getUserProfileByUserId(id)
 
     await bouncer.with('UserProfilePolicy').authorize('updateOwnProfile', profile)
 
     const validatedData = await request.validate(UserProfileValidator)
-    const payload = {
-      userId: id,
-      data: {
-        ...validatedData,
-      },
-    }
-    const updatedProfile = await this.repository.updateUserProfile(payload)
+
+    const updatedProfile = await this.repository.updateUserProfile(profile, validatedData)
 
     return response.ok(updatedProfile.serialize(this.getProfileSerializationOptions()))
   }
@@ -48,15 +43,11 @@ export default class UserProfilesController {
     await bouncer.with('UserProfilePolicy').authorize('updateUserProfileById')
 
     const id = request.param('id')
-    const validatedData = await request.validate(UserProfileValidator)
-    const payload = {
-      userId: id,
-      data: {
-        ...validatedData,
-      },
-    }
+    const profile = await this.repository.getUserProfileByUserId(id)
 
-    const updatedProfile = await this.repository.updateUserProfile(payload)
+    const validatedData = await request.validate(UserProfileValidator)
+
+    const updatedProfile = await this.repository.updateUserProfile(profile, validatedData)
 
     response.ok(updatedProfile.serialize(this.getProfileSerializationOptions()))
   }
