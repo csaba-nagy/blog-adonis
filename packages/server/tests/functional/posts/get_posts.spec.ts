@@ -1,38 +1,14 @@
-import Database from '@ioc:Adonis/Lucid/Database'
-import type { ApiClient } from '@japa/api-client'
 import { test } from '@japa/runner'
 import { PostState, UserRole } from 'App/Enums'
-import type { Post } from 'App/Models'
 import { User } from 'App/Models'
 import {
-  DB_CONNECTION,
-  POSTS_PATH_PREFIX,
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
+import { getAllPost, setTransaction } from 'Tests/helpers'
 
 test.group('GET /posts', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
-
-  const getAllPost = async (
-    client: ApiClient,
-    loggedUser: User | null = null,
-    nextPageUrl = '/?page=1',
-    posts: Post[] = []) => {
-    const response = !loggedUser
-      ? await client.get(`${POSTS_PATH_PREFIX}${nextPageUrl}`)
-      : await client.get(`${POSTS_PATH_PREFIX}${nextPageUrl}`).loginAs(loggedUser)
-
-    const { meta, data } = response.body()
-    const { next_page_url } = meta
-
-    posts = [...posts, ...data]
-
-    return !next_page_url ? posts : getAllPost(client, loggedUser, next_page_url, posts)
-  }
+  group.each.setup(setTransaction)
 
   test('it should return public posts only if the user is not logged in',
     async ({ client, assert }) => {

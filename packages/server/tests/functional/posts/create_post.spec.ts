@@ -1,14 +1,11 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { PostCategory, PostState, StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { DB_CONNECTION, POSTS_PATH_PREFIX, TEST_AUTHOR_ID, TEST_USER_ID } from 'Shared/const'
+import { POSTS_PATH_PREFIX, TEST_AUTHOR_ID, TEST_USER_ID } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('POST /posts', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should create a new post', async ({ client, assert }) => {
     const author = await User.findByOrFail('id', TEST_AUTHOR_ID)

@@ -1,19 +1,15 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
 import {
   AUTH_LOGIN_PATH,
-  DB_CONNECTION,
   TEST_ADMIN_ID,
   USER_ACCOUNT_PATH,
 } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('DELETE /account', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should delete the authenticated user account and profile',
     async ({ client }) => {

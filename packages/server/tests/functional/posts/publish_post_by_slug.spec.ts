@@ -1,19 +1,16 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { PostState, StatusCodes } from 'App/Enums'
 import { Post, User } from 'App/Models'
 import {
-  DB_CONNECTION,
   POSTS_PATH_PREFIX,
+  PUBLISH_PATH,
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('PATCH /posts/:slug/publish', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should publish the post if the author of the post is logged in',
     async ({ client, assert }) => {
@@ -28,9 +25,10 @@ test.group('PATCH /posts/:slug/publish', (group) => {
       const { slug, publishedAt } = posts[0]
 
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}/publish`)
+        .patch(`${POSTS_PATH_PREFIX}/${slug}${PUBLISH_PATH}`)
         .guard('api')
         .loginAs(author)
+
       response.assertStatus(StatusCodes.OK)
       assert.strictEqual(response.body().state, PostState.PUBLIC)
       assert.notEqual(response.body().published_at, publishedAt)
@@ -49,7 +47,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
       const { slug } = posts[0]
 
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}/publish`)
+        .patch(`${POSTS_PATH_PREFIX}/${slug}${PUBLISH_PATH}`)
         .guard('api')
         .loginAs(author)
 
@@ -70,7 +68,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
       const { slug } = posts[0]
 
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}/publish`)
+        .patch(`${POSTS_PATH_PREFIX}/${slug}${PUBLISH_PATH}`)
         .guard('api')
         .loginAs(user)
 
@@ -88,7 +86,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
 
       const { slug } = posts[0]
 
-      const response = await client.patch(`${POSTS_PATH_PREFIX}/${slug}/publish`)
+      const response = await client.patch(`${POSTS_PATH_PREFIX}/${slug}${PUBLISH_PATH}`)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
       response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')

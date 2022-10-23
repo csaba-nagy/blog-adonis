@@ -1,14 +1,11 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import UserFactory from 'Database/factories/UserFactory'
-import { AUTH_LOGIN_PATH, DB_CONNECTION } from 'Shared/const'
+import { AUTH_LOGIN_PATH } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('POST /auth/login', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should login with valid user credentials',
     async ({ client, assert }) => {

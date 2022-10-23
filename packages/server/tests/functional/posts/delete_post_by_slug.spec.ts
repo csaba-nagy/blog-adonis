@@ -1,20 +1,16 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { PostState, StatusCodes } from 'App/Enums'
 import { Post, User } from 'App/Models'
 import {
-  DB_CONNECTION,
   POSTS_PATH_PREFIX,
   TEST_ADMIN_ID,
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('DELETE /posts/:slug', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should delete the post if it is not public and the logged user is the author of the post',
     async ({ client }) => {
