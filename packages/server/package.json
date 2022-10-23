@@ -1,6 +1,6 @@
 {
   "name": "@blog-adonis/server",
-  "version": "v0.2.3",
+  "version": "v0.3.0",
   "private": true,
   "scripts": {
     "dev": "node ace serve --watch",
