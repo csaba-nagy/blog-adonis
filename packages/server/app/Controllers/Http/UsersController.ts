@@ -52,6 +52,7 @@ export default class UsersController {
   public updateUser = async ({ auth, request, response }: HttpContextContract) => {
     const { id: userId } = auth.user!
     const validatedData = await request.validate(UpdateUserValidator)
+
     const payload = {
       id: userId,
       ...validatedData,
