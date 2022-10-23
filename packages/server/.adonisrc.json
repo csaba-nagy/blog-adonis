@@ -13,7 +13,8 @@
     "Config": "config",
     "Database": "database",
     "Contracts": "contracts",
-    "Shared": "shared"
+    "Shared": "shared",
+    "Tests": "tests"
   },
   "preloads": [
     "./start/routes",

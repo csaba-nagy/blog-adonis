@@ -1,14 +1,11 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
-import { AUTH_LOGOUT_PATH, DB_CONNECTION, TEST_ADMIN_ID } from 'Shared/const'
+import { AUTH_LOGOUT_PATH, TEST_ADMIN_ID } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('GET /auth/logout', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should logout the authenticated user', async ({ client }) => {
     const user = await User.find(TEST_ADMIN_ID)

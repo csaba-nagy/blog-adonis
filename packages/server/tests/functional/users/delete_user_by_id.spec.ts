@@ -1,21 +1,17 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
 import {
-  DB_CONNECTION,
   TEST_ADMIN_ID,
   USER_ACCOUNT_PATH,
   USER_ACCOUNT_PATH_WITH_USER_ID,
   USER_PROFILE_PATH,
 } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('DELETE /users/:id', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should delete user account and profile if the user is an admin',
     async ({ client, assert }) => {
@@ -72,17 +68,14 @@ test.group('DELETE /users/:id', (group) => {
       response.assertTextIncludes('NOT_FOUND')
     })
   test('it should return error (403 FORBIDDEN) if the authenticated user is not authorized',
-    async ({ client, assert }) => {
+    async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
       const { id } = await UserFactory.create() // 👈 this is the user that should be deleted, a.k.a targetedUser
       const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
 
       for (const userRole of unauthorizedUserRoles) {
-        // set the TEST_USER role to false value directly. NOTE: The TEST_USER is admin as default
-        const user = await User.updateOrCreate({ id: TEST_ADMIN_ID }, { role: userRole })
-
-        assert.propertyVal(user.$attributes, 'role', userRole)
+        const user = await User.findByOrFail('role', userRole)
 
         const response = await client.delete(targetedUserPath).guard('api').loginAs(user)
 

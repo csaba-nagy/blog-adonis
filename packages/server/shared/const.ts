@@ -16,6 +16,7 @@ export const API_PATH = `${API_BASE_ROUTE}/${API_VERSION}` // /api/v1
 export const USERS_PATH = '/users'
 export const POSTS_PATH = '/posts'
 export const AUTH_PATH = '/auth'
+export const PUBLISH_PATH = '/publish'
 
 export const TEST_ADMIN_ID = 1
 export const TEST_AUTHOR_ID = 2

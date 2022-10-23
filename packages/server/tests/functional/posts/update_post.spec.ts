@@ -1,19 +1,15 @@
-import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import { PostCategory, PostState, StatusCodes } from 'App/Enums'
 import { Post, User } from 'App/Models'
 import {
-  DB_CONNECTION,
   POSTS_PATH_PREFIX,
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
+import { setTransaction } from 'Tests/helpers'
 
 test.group('PATCH /posts', (group) => {
-  group.each.setup(async () => {
-    await Database.beginGlobalTransaction(DB_CONNECTION)
-    return () => Database.rollbackGlobalTransaction(DB_CONNECTION)
-  })
+  group.each.setup(setTransaction)
 
   test('it should update a not published post as the author',
     async ({ client, assert }) => {
