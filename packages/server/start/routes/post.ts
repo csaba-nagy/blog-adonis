@@ -6,11 +6,9 @@ const prefix = `${ROUTE_PREFIX}/posts`
 
 Route
   .group(() => {
-    Route.group(() => {
-      Route.get('/', 'PostsController.getPosts')
+    Route.get('/', 'PostsController.getPosts')
 
-      Route.get(':slug', 'PostsController.getPostBySlug')
-    })
+    Route.get(':slug', 'PostsController.getPostBySlug')
 
     Route
       .group(() => {
