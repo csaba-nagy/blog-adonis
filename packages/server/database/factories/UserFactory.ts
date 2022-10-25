@@ -1,17 +1,18 @@
 import Factory from '@ioc:Adonis/Lucid/Factory'
 import { UserRole, UserStatus } from 'App/Enums'
 import { User } from 'App/Models'
+
 import PostFactory from './PostFactory'
 import UserProfileFactory from './UserProfileFactory'
 
-export default Factory.define(User, ({ faker }) => {
-  return {
+export default Factory
+  .define(User, ({ faker }) => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     password: '!Password11',
-  }
-})
+  }))
+
   // With state method, we can set the model properties
   // with custom values instead of the default
   .state('status.active', user => user.status = UserStatus.ACTIVE)

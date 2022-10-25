@@ -1,20 +1,44 @@
 {
-  "name": "Node.js & TypeScript",
+  "name": "Adonis Blog - Node.js & TypeScript",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
   "remoteUser": "node",
-  "postCreateCommand": "pnpm install",
+  "postCreateCommand": "sudo chown node node_modules; pnpm install",
   "customizations": {
     "vscode": {
       "extensions": [
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "usernamehw.errorlens"
       ],
       "settings": {
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
+          "source.fixAll.eslint": true,
+          "source.fixAll": false,
+          "source.organizeImports": false
         },
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "errorLens.excludeBySource": [
+          "cSpell",
+          "eslint"
+        ],
+        "errorLens.fontStyleItalic": true,
+        "errorLens.fontWeight": "100",
+        "eslint.codeAction.showDocumentation": {
+          "enable": true
+        },
+        "eslint.codeActionsOnSave.mode": "problems",
+        "eslint.quiet": true,
+        "eslint.validate": [
+          "html",
+          "javascript",
+          "json",
+          "json5",
+          "jsonc",
+          "markdown",
+          "typescript"
+        ],
+        "typescript.updateImportsOnFileMove.enabled": "always"
       }
     }
   }

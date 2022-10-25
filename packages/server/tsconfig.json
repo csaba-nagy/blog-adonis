@@ -1,12 +1,5 @@
 {
   "extends": "adonis-preset-ts/tsconfig.json",
-  "include": [
-    "**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "build"
-  ],
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "./",
@@ -42,5 +35,12 @@
       "@adonisjs/bouncer",
       "@adonisjs/lucid-slugify"
     ]
-  }
+  },
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }
