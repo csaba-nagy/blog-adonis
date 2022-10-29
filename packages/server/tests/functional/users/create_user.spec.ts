@@ -2,6 +2,7 @@ import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
 import {
+  DOMAIN,
   TEST_ADMIN_ID,
   USERS_PATH_PREFIX,
 } from 'Shared/const'
@@ -18,14 +19,20 @@ test.group('POST /users', (group) => {
 
     const response = await client.post(USERS_PATH_PREFIX).json({ firstName, lastName, email, password })
 
+    const data = response.body()
+
+    // the profile path is : http://127.0.0.1:3333/api/v1/users/profile/:id
+    // The DOMAIN part need to be removed
+    const profilePath = data.profile.replace(DOMAIN, '')
+
     response.assertStatus(StatusCodes.CREATED)
 
-    assert.properties(response.body(), requiredProperties)
+    assert.properties(data, requiredProperties)
 
-    assert.notProperty(response.body(), 'password')
+    assert.notProperty(data, 'password')
 
     const responseToGetCreatedProfile = await client
-      .get(response.body().profile)
+      .get(profilePath)
       .guard('api')
       .loginAs(await User.findOrFail(TEST_ADMIN_ID))
 
