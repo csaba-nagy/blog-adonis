@@ -1,19 +1,21 @@
-# [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 18, 16, 14, 18-bullseye, 16-bullseye, 14-bullseye, 18-buster, 16-buster, 14-buster
 ARG VARIANT=16-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+ARG USERNAME
 
-# [Optional] Uncomment if you want to install an additional version of node using nvm
-# ARG EXTRA_NODE_VERSION=10
-# RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
+ENV PROMPT_COMMAND="history -a"
+ENV HISTFILE=/commandhistory/.bash_history
 
-ARG USER=node
-USER ${USER}
+RUN mkdir /commandhistory \
+  && touch /commandhistory/.bash_history \
+  && chown -R $USERNAME /commandhistory \
+  && mkdir -p /home/$USERNAME/.vscode-server/extensions \
+  && mkdir -p /home/$USERNAME/.local/share/pnpm/store \
+  && chown -R $USERNAME /home/$USERNAME/.vscode-server /home/$USERNAME/.local/share
+
+USER $USERNAME
 
 RUN npm install -g \
-  pnpm
-
-RUN pnpm config set store-dir /home/${USER}/.pnpm-store
+  pnpm \
+  @antfu/ni \
+  && pnpm config set store-dir /home/$USERNAME/.local/share/pnpm/store

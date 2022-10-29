@@ -6,21 +6,17 @@ import {
   USERS_PATH_PREFIX,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
+import UserFactory from 'Database/factories/UserFactory'
 
 test.group('POST /users', (group) => {
   group.each.setup(setTransaction)
 
   test('it should create a new user', async ({ client, assert }) => {
-    const payload = {
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'janedoe@email.com',
-      password: '!Password11',
-    }
+    const { firstName, lastName, email, password } = await UserFactory.make()
 
     const requiredProperties = ['name', 'profile', 'account']
 
-    const response = await client.post(USERS_PATH_PREFIX).json(payload)
+    const response = await client.post(USERS_PATH_PREFIX).json({ firstName, lastName, email, password })
 
     response.assertStatus(StatusCodes.CREATED)
 

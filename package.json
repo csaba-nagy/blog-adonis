@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.25.2",
-    "eslint": "^8.21.0",
-    "typescript": "^4.7.4"
+    "@antfu/eslint-config": "^0.27.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4"
   }
 }

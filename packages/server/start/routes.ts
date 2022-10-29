@@ -20,14 +20,17 @@
 
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import Route from '@ioc:Adonis/Core/Route'
-import 'App/Routes'
+
+import './routes/auth'
+import './routes/post'
+import './routes/profile'
+import './routes/users'
 
 // check db connection
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
+
   return report.healthy ? response.ok(report) : response.badRequest(report)
 })
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+Route.get('/', () => ({ hello: 'world' }))

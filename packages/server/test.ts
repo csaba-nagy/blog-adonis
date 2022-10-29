@@ -34,11 +34,9 @@ kernel
       ...kernel.application.rcFile.tests,
       ...processCliArgs(process.argv.slice(2)),
       ...config,
-      ...{
-        importer: filePath => import(filePath),
-        setup: app.concat(runnerHooks.setup),
-        teardown: runnerHooks.teardown,
-      },
+      importer: filePath => import(filePath),
+      setup: app.concat(runnerHooks.setup),
+      teardown: runnerHooks.teardown,
       cwd: kernel.application.appRoot,
     })
 
