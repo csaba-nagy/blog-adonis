@@ -1,5 +1,6 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import type { ModelAdapterOptions } from '@ioc:Adonis/Lucid/Orm'
+import { UserRole } from 'App/Enums'
 import { User } from 'App/Models'
 
 export default class UsersRepository {
@@ -20,11 +21,11 @@ export default class UsersRepository {
     })
   }
 
-  public updateUser = (payload) => {
+  public updateUser = (targetId: number, payload) => {
     return Database.transaction(async (trx) => {
-      const user = await this.getUserById(payload.id, { client: trx })
+      const user = await this.getUserById(targetId, { client: trx })
 
-      return await user.merge({ ...payload }).save()
+      return await user.merge(payload).save()
     })
   }
 
@@ -34,4 +35,6 @@ export default class UsersRepository {
       await user.delete()
     })
   }
+
+  public isAdmin = (user: User) => user.role === UserRole.ADMIN
 }

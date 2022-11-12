@@ -1,92 +1,67 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { UsersRepository } from 'App/Repositories'
-import { CreateUserValidator, UpdateUserAsAdminValidator, UpdateUserValidator } from 'App/Validators'
-import { StatusCodes } from 'App/Enums'
+import { CreateUserValidator, UpdateUserValidator } from 'App/Validators'
 
 export default class UsersController {
   constructor(private repository = new UsersRepository()) {}
 
-  public createNewUser = async ({ request, response }: HttpContextContract) => {
+  public store = async ({ request, response }: HttpContextContract) => {
     const payload = await request.validate(CreateUserValidator)
     const user = await this.repository.createUser(payload)
 
-    return response.created(user.serialize(this.getUserDataSerializationOptions('create')))
+    return response.created(user.serialize(this.getUserDataSerializationOptions('store')))
   }
 
-  public getAllUsers = async ({ bouncer, response }: HttpContextContract) => {
+  public index = async ({ bouncer, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('getAllUsers')
 
     const users = await this.repository.getUsers()
 
-    return response.ok(users.map(user => user.serialize(this.getUserDataSerializationOptions('getAll'))))
+    return response.ok(users.map(user => user.serialize(this.getUserDataSerializationOptions('index'))))
   }
 
-  public getUserById = async ({ bouncer, request, response }: HttpContextContract) => {
-    await bouncer.with('UserPolicy').authorize('getUserById')
+  public show = async ({ bouncer, request, response }: HttpContextContract) => {
+    const targetId = request.param('id')
 
-    const user = await this.repository.getUserById(request.param('id'))
+    await bouncer.with('UserPolicy').authorize('getUserById', targetId)
 
-    return response.ok(user.serialize(this.getUserDataSerializationOptions('getOne')))
+    const user = await this.repository.getUserById(targetId)
+
+    return response.ok(user.serialize(this.getUserDataSerializationOptions('show')))
   }
 
-  public getUserAccount = async ({ auth, response }: HttpContextContract) => {
-    const user = await this.repository.getUserById(auth.user!.id)
+  public update = async ({ bouncer, request, response }: HttpContextContract) => {
+    const targetId = request.param('id')
 
-    return response.ok(user.serialize(this.getUserDataSerializationOptions('getOne')))
-  }
+    await bouncer.with('UserPolicy').authorize('updateUserById', targetId)
 
-  public updateUserById = async ({ bouncer, request, response }: HttpContextContract) => {
-    await bouncer.with('UserPolicy').authorize('updateUserById')
-
-    const validatedData = await request.validate(UpdateUserAsAdminValidator)
-    const payload = {
-      id: request.param('id'),
-      ...validatedData,
-    }
-
-    const updatedUser = await this.repository.updateUser(payload)
-
-    return response.ok(updatedUser.serialize(this.getUserDataSerializationOptions('getOne')))
-  }
-
-  public updateUser = async ({ auth, request, response }: HttpContextContract) => {
-    const { id: userId } = auth.user!
     const validatedData = await request.validate(UpdateUserValidator)
 
-    const payload = {
-      id: userId,
-      ...validatedData,
-    }
+    const updatedUser = await this.repository.updateUser(targetId, validatedData)
 
-    const updatedUser = await this.repository.updateUser(payload)
-
-    return response.ok(updatedUser.serialize(this.getUserDataSerializationOptions('getOne')))
+    return response.ok(updatedUser.serialize(this.getUserDataSerializationOptions('show')))
   }
 
-  public deleteUserById = async ({ bouncer, request, response }: HttpContextContract) => {
-    await bouncer.with('UserPolicy').authorize('deleteUserById')
+  public destroy = async ({ bouncer, request, response }: HttpContextContract) => {
+    const targetId = request.param('id')
 
-    await this.repository.deleteUser(request.param('id'))
+    await bouncer.with('UserPolicy').authorize('deleteUserById', targetId)
 
-    return response.status(StatusCodes.OK)
+    await this.repository.deleteUser(targetId)
+
+    return response.noContent()
   }
 
-  public deleteUser = async ({ auth, response }: HttpContextContract) => {
-    await this.repository.deleteUser(auth.user!.id)
-
-    return response.status(StatusCodes.OK)
-  }
-
-  private getUserDataSerializationOptions = (method: 'create' | 'getAll' | 'getOne') => {
-    if (method === 'create') {
+  private getUserDataSerializationOptions = (method: 'store' | 'index' | 'show') => {
+    if (method === 'store') {
       return {
         fields: {
-          pick: ['name', 'profile', 'account'],
+          pick: ['id', 'name', 'profile', 'account'],
         },
       }
     }
 
-    if (method === 'getAll') {
+    if (method === 'index') {
       return {
         fields: {
           omit: ['created_at', 'updated_at'],

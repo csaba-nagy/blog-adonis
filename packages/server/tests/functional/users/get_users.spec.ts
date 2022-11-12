@@ -1,28 +1,26 @@
 import { test } from '@japa/runner'
 import { StatusCodes, UserRole } from 'App/Enums'
 import { User } from 'App/Models'
-import { TEST_ADMIN_ID, USERS_PATH_PREFIX } from 'Shared/const'
+import { TEST_ADMIN_ID } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
+import Route from '@ioc:Adonis/Core/Route'
 
 test.group('GET /users', (group) => {
   group.each.setup(setTransaction)
 
-  test('it should return all users if the user is authenticated and authorized',
+  test('it should return all users if the user is authenticated and authorized (admin only)',
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID)
+      const path = Route.makeUrl('users.index')
 
-      const response = await client.get(USERS_PATH_PREFIX).guard('api').loginAs(user)
+      const requiredProperties = ['id', 'email', 'role', 'status', 'profile', 'account', 'name']
+
+      const response = await client.get(path).guard('api').loginAs(user)
 
       response.assertStatus(StatusCodes.OK)
 
-      // Only the admin users can fire this action
-      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
-
       response.body().forEach((user) => {
-        assert.properties(
-          user,
-          ['id', 'email', 'role', 'status', 'profile', 'account', 'name'],
-        )
+        assert.properties(user, requiredProperties)
 
         assert.notProperty(user, 'password')
       })
@@ -30,7 +28,8 @@ test.group('GET /users', (group) => {
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const response = await client.get(USERS_PATH_PREFIX)
+      const path = Route.makeUrl('users.index')
+      const response = await client.get(path)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
 
@@ -40,11 +39,12 @@ test.group('GET /users', (group) => {
   test('it should return error (403 FORBIDDEN) if the authenticated user is not authorized',
     async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
+      const path = Route.makeUrl('users.index')
 
       for (const userRole of unauthorizedUserRoles) {
         const user = await User.findByOrFail('role', userRole)
 
-        const response = await client.get(USERS_PATH_PREFIX).guard('api').loginAs(user)
+        const response = await client.get(path).guard('api').loginAs(user)
 
         response.assertStatus(StatusCodes.FORBIDDEN)
 

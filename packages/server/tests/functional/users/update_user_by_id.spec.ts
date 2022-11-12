@@ -3,37 +3,81 @@ import { StatusCodes, UserRole, UserStatus } from 'App/Enums'
 import { User } from 'App/Models'
 import UserFactory from 'Database/factories/UserFactory'
 import {
-  TEST_ADMIN_ID,
-  USER_ACCOUNT_PATH,
-  USER_ACCOUNT_PATH_WITH_USER_ID,
+  TEST_ADMIN_ID, TEST_USER_ID,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
+import Route from '@ioc:Adonis/Core/Route'
 
 test.group('PATCH /users/:id', (group) => {
   group.each.setup(setTransaction)
 
-  test('it should update a user data by if the request initiating user is an admin',
+  const payload = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@email.com',
+    password: '!Password11',
+  }
+
+  test('it should update a user data by id, if the logged user role is admin',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 TEST_USER is admin by default
+      const admin = await User.findOrFail(TEST_ADMIN_ID)
+      const user = await UserFactory.create()
+
+      const updatePath = Route.makeUrl('users.update', { id: user.id })
+      const getPath = Route.makeUrl('users.show', { id: user.id })
 
       const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
 
-      const payload = {
-        firstName: 'John',
-        lastName: 'Doe',
-      }
+      const preUpdateData = await client.get(getPath)
+        .guard('api')
+        .loginAs(admin)
 
-      const preUpdateData = await client.get(USER_ACCOUNT_PATH_WITH_USER_ID)
+      const { updated_at } = preUpdateData.body()
+
+      const response = await client
+        .patch(updatePath)
+        .json(payload)
+        .guard('api')
+        .loginAs(admin)
+
+      response.assertStatus(StatusCodes.OK)
+
+      assert.notPropertyVal(response.body(), 'updated_at', updated_at)
+      assert.properties(
+        response.body(),
+        expectedUserProperties,
+      )
+
+      assert.notProperty(response.body(), 'password')
+
+      const getUpdatedUser = await client
+        .get(getPath)
+        .guard('api')
+        .loginAs(admin)
+
+      const data = getUpdatedUser.body()
+
+      assert.propertyVal(data, 'name', `${payload.firstName} ${payload.lastName}`)
+      assert.propertyVal(data, 'email', `${payload.email}`)
+    })
+
+  test('it should update the user if the logged user id and the targeted id are the same',
+    async ({ client, assert }) => {
+      const user = await UserFactory.create()
+
+      const updatePath = Route.makeUrl('users.update', { id: user.id })
+      const getPath = Route.makeUrl('users.show', { id: user.id })
+
+      const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
+
+      const preUpdateData = await client.get(getPath)
         .guard('api')
         .loginAs(user)
 
       const { updated_at } = preUpdateData.body()
 
-      // Only the admin users can fire this action
-      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
-
       const response = await client
-        .patch(USER_ACCOUNT_PATH_WITH_USER_ID)
+        .patch(updatePath)
         .json(payload)
         .guard('api')
         .loginAs(user)
@@ -49,19 +93,22 @@ test.group('PATCH /users/:id', (group) => {
       assert.notProperty(response.body(), 'password')
 
       const getUpdatedUser = await client
-        .get(USER_ACCOUNT_PATH_WITH_USER_ID)
+        .get(getPath)
         .guard('api')
         .loginAs(user)
 
-      assert.propertyVal(getUpdatedUser.body(), 'name', `${payload.firstName} ${payload.lastName}`)
+      const data = getUpdatedUser.body()
+
+      assert.propertyVal(data, 'name', `${payload.firstName} ${payload.lastName}`)
+      assert.propertyVal(data, 'email', `${payload.email}`)
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',
     async ({ client }) => {
-      const payload = {} // 👈 payload data is not relevant in this case
+      const path = Route.makeUrl('users.update', { id: TEST_USER_ID })
 
       const response = await client
-        .patch(USER_ACCOUNT_PATH_WITH_USER_ID)
+        .patch(path)
         .json(payload)
 
       response.assertStatus(StatusCodes.UNAUTHORIZED)
@@ -70,21 +117,16 @@ test.group('PATCH /users/:id', (group) => {
     })
 
   test('it should return error (404 NOT_FOUND) if the given id is invalid',
-    async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_ADMIN_ID)
+    async ({ client }) => {
+      const admin = await User.findOrFail(TEST_ADMIN_ID)
       const invalidId = 99999
 
-      const payload = {
-        firstName: 'James',
-      }
+      const path = Route.makeUrl('users.update', { id: invalidId })
 
-      // Only the admin users can fire this action
-      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
-
-      const response = await client.patch(`${USER_ACCOUNT_PATH}/${invalidId}`)
+      const response = await client.patch(path)
         .json(payload)
         .guard('api')
-        .loginAs(user)
+        .loginAs(admin)
 
       response.assertStatus(StatusCodes.NOT_FOUND)
       response.assertTextIncludes('NOT_FOUND')
@@ -92,51 +134,48 @@ test.group('PATCH /users/:id', (group) => {
 
   test('it should return validation error if some of the given data not valid',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_ADMIN_ID)
+      const admin = await User.findOrFail(TEST_ADMIN_ID)
+      const path = Route.makeUrl('users.update', { id: TEST_USER_ID })
 
-      const requiredUserProperties = ['firstName', 'lastName', 'email', 'role', 'status']
-
-      // Only the admin users can fire this action
-      assert.propertyVal(user.$attributes, 'role', UserRole.ADMIN)
+      const requiredUserProperties = ['firstName', 'lastName', 'email', 'password', 'role', 'status']
 
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
       for (const userProperty of requiredUserProperties) {
-        const payload = {
-          firstName: 'James',
-          lastName: 'Jones',
-          email: 'jamesjones@email.com',
+        const data = {
+          ...payload,
           role: UserRole.USER,
           status: UserStatus.ACTIVE,
         }
 
-        payload[userProperty] = '_'
+        data[userProperty] = '_'
 
         const response = await client
-          .patch(USER_ACCOUNT_PATH_WITH_USER_ID)
-          .json(payload)
+          .patch(path)
+          .json(data)
           .guard('api')
-          .loginAs(user)
+          .loginAs(admin)
 
-        assert.properties(payload, requiredUserProperties)
+        assert.properties(data, requiredUserProperties)
         response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
         assert.properties(response.body(), ['errors'])
         assert.exists(response.body().errors[0].message)
       }
     })
+
   test('it should return error (403 FORBIDDEN) if the authenticated user is not authorized',
     async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
-      const { id } = await UserFactory.create()
-      const targetedUserPath = `${USER_ACCOUNT_PATH}/${id}`
+      const { id: targetedId } = await UserFactory.create()
+      const targetedUserPath = Route.makeUrl('users.update', { id: targetedId })
 
       for (const userRole of unauthorizedUserRoles) {
         const user = await User.findByOrFail('role', userRole)
 
         const response = await client
           .patch(targetedUserPath)
-          .json({}) // payload is not relevant in this case
+          .json(payload)
           .guard('api')
           .loginAs(user)
 
