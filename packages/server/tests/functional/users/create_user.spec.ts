@@ -2,28 +2,29 @@ import { test } from '@japa/runner'
 import { StatusCodes } from 'App/Enums'
 import { User } from 'App/Models'
 import {
-  DOMAIN,
   TEST_ADMIN_ID,
-  USERS_PATH_PREFIX,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
-import UserFactory from 'Database/factories/UserFactory'
+import Route from '@ioc:Adonis/Core/Route'
 
 test.group('POST /users', (group) => {
   group.each.setup(setTransaction)
 
+  const payload = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@email.com',
+    password: '!Password1234',
+  }
+
   test('it should create a new user', async ({ client, assert }) => {
-    const { firstName, lastName, email, password } = await UserFactory.make()
+    const path = Route.makeUrl('users.store')
 
-    const requiredProperties = ['name', 'profile', 'account']
+    const requiredProperties = ['id', 'name', 'profile', 'account']
 
-    const response = await client.post(USERS_PATH_PREFIX).json({ firstName, lastName, email, password })
+    const response = await client.post(path).json(payload)
 
     const data = response.body()
-
-    // the profile path is : http://127.0.0.1:3333/api/v1/users/profile/:id
-    // The DOMAIN part need to be removed
-    const profilePath = data.profile.replace(DOMAIN, '')
 
     response.assertStatus(StatusCodes.CREATED)
 
@@ -31,10 +32,14 @@ test.group('POST /users', (group) => {
 
     assert.notProperty(data, 'password')
 
+    // check that the related profile is also created
+    const user = await User.findOrFail(data.id)
+    const profilePath = Route.makeUrl('profiles.show', { id: data.id })
+
     const responseToGetCreatedProfile = await client
       .get(profilePath)
       .guard('api')
-      .loginAs(await User.findOrFail(TEST_ADMIN_ID))
+      .loginAs(user)
 
     responseToGetCreatedProfile.assertStatus(StatusCodes.OK)
   })
@@ -43,14 +48,14 @@ test.group('POST /users', (group) => {
     async ({ client, assert }) => {
       const { email: emailInUse } = await User.findOrFail(TEST_ADMIN_ID)
 
-      const payload = {
-        firstName: 'test',
-        lastName: 'test',
+      const path = Route.makeUrl('users.store')
+
+      const data = {
+        ...payload,
         email: emailInUse,
-        password: 'password',
       }
 
-      const response = await client.post(USERS_PATH_PREFIX).json(payload)
+      const response = await client.post(path).json(data)
 
       response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
@@ -63,18 +68,17 @@ test.group('POST /users', (group) => {
     async ({ client, assert }) => {
       const requiredUserData = ['firstName', 'lastName', 'email', 'password']
 
+      const path = Route.makeUrl('users.store')
+
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
       for (const userData of requiredUserData) {
-        const payload = {
-          firstName: 'test',
-          lastName: 'test',
-          email: 'test@email.com',
-          password: '!Password11',
+        const data = {
+          ...payload,
         }
 
-        payload[userData] = ''
+        data[userData] = ''
 
-        const response = await client.post(USERS_PATH_PREFIX).json(payload)
+        const response = await client.post(path).json(data)
 
         response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 

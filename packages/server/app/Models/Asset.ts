@@ -1,9 +1,10 @@
 import type { DateTime } from 'luxon'
 import type { ManyToMany } from '@ioc:Adonis/Lucid/Orm'
-import { BaseModel, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import { column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { Post } from 'App/Models'
+import AppBaseModel from './AppBaseModel'
 
-export default class Asset extends BaseModel {
+export default class Asset extends AppBaseModel {
   @column({ isPrimary: true })
   public id: number
 

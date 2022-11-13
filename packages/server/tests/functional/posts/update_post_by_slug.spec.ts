@@ -2,27 +2,35 @@ import { test } from '@japa/runner'
 import { PostCategory, PostState, StatusCodes } from 'App/Enums'
 import { Post, User } from 'App/Models'
 import {
-  POSTS_PATH_PREFIX,
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
+import Route from '@ioc:Adonis/Core/Route'
 
 test.group('PATCH /posts', (group) => {
   group.each.setup(setTransaction)
 
-  test('it should update a not published post as the author',
+  const payload = {
+    pageTitle: 'updated post',
+    title: 'updated post',
+    category: PostCategory.TECH,
+    description: 'This is an updated description.',
+    metaDescription: 'This is an updated description.',
+    state: PostState.PUBLIC,
+    body: 'The content has been updated',
+  }
+
+  test('it should update a not published post by an authorized user (author)',
     async ({ client, assert }) => {
       const author = await User.findByOrFail('id', TEST_AUTHOR_ID)
 
-      const payload = {
-        body: 'updated test body text',
-      }
-
       const { state, updatedAt, slug } = await Post.findByOrFail('user_id', author.id)
 
+      const path = Route.makeUrl('posts.update', { slug })
+
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}`)
+        .patch(path)
         .json(payload)
         .guard('api')
         .loginAs(author)
@@ -31,16 +39,16 @@ test.group('PATCH /posts', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.notPropertyVal(response.body(), 'updated_at', updatedAt)
-
-      assert.propertyVal(response.body(), 'body', payload.body)
+      assert.notPropertyVal(response.body(), 'updatedAt', updatedAt)
     })
 
-  test('it should return an error (401 UNAUTHORIZED) if the user is not authenticated',
+  test('it should return an error (401 UNAUTHORIZED), if the user is not authenticated',
     async ({ client, assert }) => {
       const { state, slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
 
-      const response = await client.patch(`${POSTS_PATH_PREFIX}/${slug}`).json({})
+      const path = Route.makeUrl('posts.update', { slug })
+
+      const response = await client.patch(path).json(payload)
 
       assert.notEqual(state, PostState.PUBLIC)
 
@@ -49,20 +57,21 @@ test.group('PATCH /posts', (group) => {
       response.assertTextIncludes('E_UNAUTHORIZED_ACCESS')
     })
 
-  test('it should return an error (403 FORBIDDEN) if the state of the post is already public',
+  test('it should return an error (403 FORBIDDEN), if the state of the post is already public and the logged user is the author',
     async ({ client }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
-      const posts = await Post
-        .query()
-        .where('user_id', '=', TEST_AUTHOR_ID)
-        .andWhere('state', '=', PostState.PUBLIC)
-        .limit(1)
 
-      const { slug } = posts[0]
+      const { slug } = (await Post
+        .query()
+        .where('user_id', '=', author.id)
+        .andWhere('state', '=', PostState.PUBLIC)
+        .limit(1))[0]
+
+      const path = Route.makeUrl('posts.update', { slug })
 
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}`)
-        .json({})
+        .patch(path)
+        .json(payload)
         .guard('api')
         .loginAs(author)
 
@@ -72,13 +81,15 @@ test.group('PATCH /posts', (group) => {
 
   test('it should return an error (403 FORBIDDEN) if the logged USER tries to update a post',
     async ({ client }) => {
-      const { slug } = await Post.findByOrFail('user_id', TEST_AUTHOR_ID)
+      const { slug } = await Post.findByOrFail('userId', TEST_AUTHOR_ID)
 
       const user = await User.findOrFail(TEST_USER_ID)
 
+      const path = Route.makeUrl('posts.update', { slug })
+
       const response = await client
-        .patch(`${POSTS_PATH_PREFIX}/${slug}`)
-        .json({})
+        .patch(path)
+        .json(payload)
         .guard('api')
         .loginAs(user)
 
@@ -86,12 +97,15 @@ test.group('PATCH /posts', (group) => {
       response.assertTextIncludes('E_AUTHORIZATION_FAILURE')
     })
 
-  test('it should return validation error if some of the given data not valid',
+  test('it should return validation error, if some of the given data not valid',
     async ({ client, assert }) => {
       const author = await User.findOrFail(TEST_AUTHOR_ID)
+
       const { slug } = await Post.findByOrFail('user_id', author.id)
 
-      const optionalProperties = [
+      const path = Route.makeUrl('posts.update', { slug })
+
+      const requiredProperties = [
         'pageTitle',
         'title',
         'category',
@@ -101,26 +115,19 @@ test.group('PATCH /posts', (group) => {
         'state',
       ]
 
-      for (const property of optionalProperties) {
-        const payload = {
-          pageTitle: 'test page title',
-          title: 'test title',
-          category: PostCategory.AFK,
-          description: 'test description',
-          metaDescription: 'test meta description',
-          body: 'test body text',
-          state: PostState.DRAFT,
+      for (const property of requiredProperties) {
+        const data = {
+          ...payload,
         }
 
-        payload[property] = '_'
+        data[property] = '_'
 
         const response = await client
-          .patch(`${POSTS_PATH_PREFIX}/${slug}`)
-          .json(payload)
+          .patch(path)
+          .json(data)
           .guard('api')
           .loginAs(author)
 
-        assert.properties(payload, optionalProperties)
         response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
         assert.properties(response.body(), ['errors'])

@@ -1,12 +1,13 @@
-import type { DateTime } from 'luxon'
+import { DateTime } from 'luxon'
 import type { BelongsTo, ManyToMany, ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
-import { BaseModel, belongsTo, column, manyToMany, scope } from '@ioc:Adonis/Lucid/Orm'
+import { beforeSave, belongsTo, column, manyToMany, scope } from '@ioc:Adonis/Lucid/Orm'
 import type { PostCategory } from 'App/Enums'
 import { PostState } from 'App/Enums'
 import { Asset, User } from 'App/Models'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
+import AppBaseModel from './AppBaseModel'
 
-export default class Post extends BaseModel {
+export default class Post extends AppBaseModel {
   public static table = 'posts'
 
   @column({ isPrimary: true })
@@ -86,4 +87,10 @@ export default class Post extends BaseModel {
   public static orderedByPublicationDate = scope((query) => {
     query.orderBy('published_at', 'desc')
   })
+
+  @beforeSave()
+  public static async setPublishDate(post: Post) {
+    if (post.state === PostState.PUBLIC)
+      post.publishedAt = DateTime.now()
+  }
 }

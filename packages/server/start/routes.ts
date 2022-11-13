@@ -26,6 +26,10 @@ import './routes/post'
 import './routes/profile'
 import './routes/users'
 
+// Global param matchers
+Route
+  .where('id', Route.matchers.number())
+
 // check db connection
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
