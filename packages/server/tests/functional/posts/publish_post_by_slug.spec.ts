@@ -31,7 +31,7 @@ test.group('PATCH /posts/:slug/publish', (group) => {
 
       response.assertStatus(StatusCodes.OK)
       assert.strictEqual(response.body().state, PostState.PUBLIC)
-      assert.notEqual(response.body().published_at, publishedAt)
+      assert.notEqual(response.body().publishedAt, publishedAt)
     })
 
   test('it should return an error (403 FORBIDDEN) if the post is already published',

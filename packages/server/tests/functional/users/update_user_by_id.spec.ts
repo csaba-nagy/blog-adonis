@@ -26,13 +26,13 @@ test.group('PATCH /users/:id', (group) => {
       const updatePath = Route.makeUrl('users.update', { id: user.id })
       const getPath = Route.makeUrl('users.show', { id: user.id })
 
-      const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
+      const expectedUserProperties = ['id', 'email', 'role', 'status', 'createdAt', 'updatedAt', 'profile', 'name']
 
       const preUpdateData = await client.get(getPath)
         .guard('api')
         .loginAs(admin)
 
-      const { updated_at } = preUpdateData.body()
+      const { updatedAt } = preUpdateData.body()
 
       const response = await client
         .patch(updatePath)
@@ -42,7 +42,7 @@ test.group('PATCH /users/:id', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.notPropertyVal(response.body(), 'updated_at', updated_at)
+      assert.notPropertyVal(response.body(), 'updatedAt', updatedAt)
       assert.properties(
         response.body(),
         expectedUserProperties,
@@ -68,13 +68,13 @@ test.group('PATCH /users/:id', (group) => {
       const updatePath = Route.makeUrl('users.update', { id: user.id })
       const getPath = Route.makeUrl('users.show', { id: user.id })
 
-      const expectedUserProperties = ['id', 'email', 'role', 'status', 'created_at', 'updated_at', 'profile', 'name']
+      const expectedUserProperties = ['id', 'email', 'role', 'status', 'createdAt', 'updatedAt', 'profile', 'name']
 
       const preUpdateData = await client.get(getPath)
         .guard('api')
         .loginAs(user)
 
-      const { updated_at } = preUpdateData.body()
+      const { updatedAt } = preUpdateData.body()
 
       const response = await client
         .patch(updatePath)
@@ -84,7 +84,7 @@ test.group('PATCH /users/:id', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.notPropertyVal(response.body(), 'updated_at', updated_at)
+      assert.notPropertyVal(response.body(), 'updatedAt', updatedAt)
       assert.properties(
         response.body(),
         expectedUserProperties,

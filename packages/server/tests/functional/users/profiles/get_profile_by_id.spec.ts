@@ -13,17 +13,17 @@ test.group('GET /profile/:id', (group) => {
   group.each.setup(setTransaction)
 
   const expectedProperties = [
-    'user_id',
-    'avatar_url',
+    'userId',
+    'avatarUrl',
     'biography',
-    'website_url',
-    'facebook_url',
-    'twitter_url',
-    'instagram_url',
-    'youtube_url',
-    'github_url',
-    'linkedin_url',
-    'updated_at',
+    'websiteUrl',
+    'facebookUrl',
+    'twitterUrl',
+    'instagramUrl',
+    'youtubeUrl',
+    'githubUrl',
+    'linkedinUrl',
+    'updatedAt',
   ]
 
   test('it should return a valid user profile, if the logged user is authenticated (admin only)',
@@ -38,7 +38,7 @@ test.group('GET /profile/:id', (group) => {
 
       response.assertStatus(StatusCodes.OK)
 
-      assert.propertyVal(response.body(), 'user_id', TEST_USER_ID)
+      assert.propertyVal(response.body(), 'userId', TEST_USER_ID)
       assert.properties(response.body(), expectedProperties)
     })
 
@@ -55,7 +55,7 @@ test.group('GET /profile/:id', (group) => {
 
         response.assertStatus(StatusCodes.OK)
 
-        assert.propertyVal(response.body(), 'user_id', TEST_USER_ID)
+        assert.propertyVal(response.body(), 'userId', TEST_USER_ID)
         assert.properties(response.body(), expectedProperties)
       }
     })

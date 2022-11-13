@@ -23,17 +23,17 @@ test.group('POST /posts', (group) => {
 
     const requiredProperties = [
       'id',
-      'page_title',
+      'pageTitle',
       'title',
       'slug',
       'category',
-      'user_id',
+      'userId',
       'description',
-      'meta_description',
+      'metaDescription',
       'body',
       'state',
-      'created_at',
-      'updated_at',
+      'createdAt',
+      'updatedAt',
     ]
 
     const response = await client

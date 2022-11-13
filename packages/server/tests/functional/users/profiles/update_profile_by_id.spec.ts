@@ -31,7 +31,7 @@ test.group('PATCH /profile/:id', (group) => {
       const getPath = Route.makeUrl('profiles.show', { id: TEST_USER_ID })
 
       const preUpdateData = await client.get(getPath).loginAs(admin)
-      const { updated_at } = preUpdateData.body()
+      const { updatedAt } = preUpdateData.body()
 
       const response = await client.patch(updatePath)
         .json(payload)
@@ -42,8 +42,11 @@ test.group('PATCH /profile/:id', (group) => {
 
       const data = response.body()
 
-      assert.notPropertyVal(data, 'updated_at', updated_at)
-      // TODO: set a naming strategy to unifying the data properties, than test to equality between the data[property] and the payload[property]
+      assert.notPropertyVal(data, 'updatedAt', updatedAt)
+
+      const props = Object.keys(payload)
+
+      props.forEach(prop => assert.equal(payload[prop], data[prop]))
     })
 
   test('it should update a user profile by id, if the logged user id and the targeted id are the same',
@@ -54,7 +57,7 @@ test.group('PATCH /profile/:id', (group) => {
       const getPath = Route.makeUrl('profiles.show', { id: user.id })
 
       const preUpdateData = await client.get(getPath).loginAs(user)
-      const { updated_at } = preUpdateData.body()
+      const { updatedAt } = preUpdateData.body()
 
       const response = await client.patch(updatePath)
         .json(payload)
@@ -65,8 +68,10 @@ test.group('PATCH /profile/:id', (group) => {
 
       const data = response.body()
 
-      assert.notPropertyVal(data, 'updated_at', updated_at)
-      // TODO: set a naming strategy to unifying the data properties, than test to equality between the data[property] and the payload[property]
+      assert.notPropertyVal(data, 'updatedAt', updatedAt)
+      const props = Object.keys(payload)
+
+      props.forEach(prop => assert.equal(payload[prop], data[prop]))
     })
 
   test('it should return error (401 UNAUTHORIZED) if the user is not authenticated',

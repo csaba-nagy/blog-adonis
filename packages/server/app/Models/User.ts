@@ -1,12 +1,13 @@
 import type { DateTime } from 'luxon'
 import type { HasMany, HasOne } from '@ioc:Adonis/Lucid/Orm'
-import { BaseModel, beforeSave, column, computed, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { beforeSave, column, computed, hasMany, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import type { UserRole, UserStatus } from 'App/Enums'
 import { Comment, Post, UserProfile } from 'App/Models'
 import { DOMAIN, USER_ACCOUNT_PATH, USER_PROFILE_PATH } from 'Shared/const'
+import AppBaseModel from './AppBaseModel'
 
-export default class User extends BaseModel {
+export default class User extends AppBaseModel {
   public static table = 'users'
 
   @column({ isPrimary: true })

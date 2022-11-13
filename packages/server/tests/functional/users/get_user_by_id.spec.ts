@@ -12,21 +12,21 @@ import Route from '@ioc:Adonis/Core/Route'
 test.group('GET /users/:id', (group) => {
   group.each.setup(setTransaction)
 
+  const expectedUserProperties = [
+    'id',
+    'email',
+    'role',
+    'status',
+    'createdAt',
+    'updatedAt',
+    'profile',
+    'name',
+  ]
+
   test('it should return a valid user account by id, if the logged user role is admin',
     async ({ client, assert }) => {
       const admin = await User.findOrFail(TEST_ADMIN_ID)
       const path = Route.makeUrl('users.show', { id: TEST_USER_ID })
-
-      const expectedUserProperties = [
-        'id',
-        'email',
-        'role',
-        'status',
-        'created_at',
-        'updated_at',
-        'profile',
-        'name',
-      ]
 
       const response = await client
         .get(path)
@@ -46,17 +46,6 @@ test.group('GET /users/:id', (group) => {
     async ({ client, assert }) => {
       const user = await UserFactory.with('profile').create()
       const path = Route.makeUrl('users.show', { id: user.id })
-
-      const expectedUserProperties = [
-        'id',
-        'email',
-        'role',
-        'status',
-        'created_at',
-        'updated_at',
-        'profile',
-        'name',
-      ]
 
       const response = await client
         .get(path)
