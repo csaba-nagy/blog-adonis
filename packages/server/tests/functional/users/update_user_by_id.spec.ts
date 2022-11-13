@@ -21,7 +21,7 @@ test.group('PATCH /users/:id', (group) => {
   test('it should update a user data by id, if the logged user role is admin',
     async ({ client, assert }) => {
       const admin = await User.findOrFail(TEST_ADMIN_ID)
-      const user = await UserFactory.create()
+      const user = await UserFactory.with('profile').create()
 
       const updatePath = Route.makeUrl('users.update', { id: user.id })
       const getPath = Route.makeUrl('users.show', { id: user.id })
@@ -63,7 +63,7 @@ test.group('PATCH /users/:id', (group) => {
 
   test('it should update the user if the logged user id and the targeted id are the same',
     async ({ client, assert }) => {
-      const user = await UserFactory.create()
+      const user = await UserFactory.with('profile').create()
 
       const updatePath = Route.makeUrl('users.update', { id: user.id })
       const getPath = Route.makeUrl('users.show', { id: user.id })
@@ -167,7 +167,7 @@ test.group('PATCH /users/:id', (group) => {
     async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
-      const { id: targetedId } = await UserFactory.create()
+      const { id: targetedId } = await UserFactory.with('profile').create()
       const targetedUserPath = Route.makeUrl('users.update', { id: targetedId })
 
       for (const userRole of unauthorizedUserRoles) {

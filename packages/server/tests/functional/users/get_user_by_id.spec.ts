@@ -44,7 +44,7 @@ test.group('GET /users/:id', (group) => {
 
   test('it should return the logged user own data, if the targeted id and the logged user id are the same',
     async ({ client, assert }) => {
-      const user = await UserFactory.create()
+      const user = await UserFactory.with('profile').create()
       const path = Route.makeUrl('users.show', { id: user.id })
 
       const expectedUserProperties = [
@@ -101,7 +101,7 @@ test.group('GET /users/:id', (group) => {
     async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
-      const { id: userId } = await UserFactory.create()
+      const { id: userId } = await UserFactory.with('profile').create()
       const path = Route.makeUrl('users.show', { id: userId })
 
       for (const userRole of unauthorizedUserRoles) {

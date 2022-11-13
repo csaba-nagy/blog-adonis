@@ -17,7 +17,7 @@ test.group('DELETE /users/:id', (group) => {
     async ({ client }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 this user fires the delete request
 
-      const { id: targetedUserId } = await UserFactory.create() // 👈 this is the user that should be deleted, a.k.a targetedUser
+      const { id: targetedUserId } = await UserFactory.with('profile').create() // 👈 this is the user that should be deleted, a.k.a targetedUser
       const path = Route.makeUrl('users.destroy', { id: targetedUserId })
 
       const targetedUserProfilePath = `${USER_PROFILE_PATH}/${targetedUserId}` // TODO: it should be refactored as soon as the profile roots are refactored
@@ -49,7 +49,7 @@ test.group('DELETE /users/:id', (group) => {
 
   test('it should delete the user and its profile, if the logged user id and the targeted id are the same',
     async ({ client }) => {
-      const user = await UserFactory.create()
+      const user = await UserFactory.with('profile').create()
 
       const path = Route.makeUrl('users.destroy', { id: user.id })
       const profilePath = `${USER_PROFILE_PATH}/${user.id}`
@@ -106,7 +106,7 @@ test.group('DELETE /users/:id', (group) => {
     async ({ client }) => {
       const unauthorizedUserRoles = [UserRole.AUTHOR, UserRole.USER]
 
-      const { id: targetedUserId } = await UserFactory.create() // 👈 this is the user that should be deleted, a.k.a targetedUser
+      const { id: targetedUserId } = await UserFactory.with('profile').create() // 👈 this is the user that should be deleted, a.k.a targetedUser
       const path = Route.makeUrl('users.destroy', { id: targetedUserId })
 
       for (const userRole of unauthorizedUserRoles) {

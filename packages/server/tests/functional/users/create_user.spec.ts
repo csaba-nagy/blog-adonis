@@ -5,22 +5,24 @@ import {
   TEST_ADMIN_ID,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
-import UserFactory from 'Database/factories/UserFactory'
 import Route from '@ioc:Adonis/Core/Route'
 
 test.group('POST /users', (group) => {
   group.each.setup(setTransaction)
 
-  const validPassword = '!Password1234'
+  const payload = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@email.com',
+    password: '!Password1234',
+  }
 
   test('it should create a new user', async ({ client, assert }) => {
-    const { firstName, lastName, email, password } = await UserFactory.make()
-
     const path = Route.makeUrl('users.store')
 
     const requiredProperties = ['id', 'name', 'profile', 'account']
 
-    const response = await client.post(path).json({ firstName, lastName, email, password })
+    const response = await client.post(path).json(payload)
 
     const data = response.body()
 
@@ -48,14 +50,12 @@ test.group('POST /users', (group) => {
 
       const path = Route.makeUrl('users.store')
 
-      const payload = {
-        firstName: 'test',
-        lastName: 'test',
+      const data = {
+        ...payload,
         email: emailInUse,
-        password: validPassword,
       }
 
-      const response = await client.post(path).json(payload)
+      const response = await client.post(path).json(data)
 
       response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
@@ -72,16 +72,13 @@ test.group('POST /users', (group) => {
 
       // https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
       for (const userData of requiredUserData) {
-        const payload = {
-          firstName: 'test',
-          lastName: 'test',
-          email: 'test@email.com',
-          password: validPassword,
+        const data = {
+          ...payload,
         }
 
-        payload[userData] = ''
+        data[userData] = ''
 
-        const response = await client.post(path).json(payload)
+        const response = await client.post(path).json(data)
 
         response.assertStatus(StatusCodes.UNPROCESSABLE_ENTITY)
 
