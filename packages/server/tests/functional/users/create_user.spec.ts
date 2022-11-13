@@ -32,16 +32,16 @@ test.group('POST /users', (group) => {
 
     assert.notProperty(data, 'password')
 
-    // TODO: 'refactor the test below when the profiles routes are also refactored'
+    // check that the related profile is also created
+    const user = await User.findOrFail(data.id)
+    const profilePath = Route.makeUrl('profiles.show', { id: data.id })
 
-    // const profilePath = Route.makeUrl('')
+    const responseToGetCreatedProfile = await client
+      .get(profilePath)
+      .guard('api')
+      .loginAs(user)
 
-    // const responseToGetCreatedProfile = await client
-    //   .get(profilePath)
-    //   .guard('api')
-    //   .loginAs(await User.findOrFail(TEST_ADMIN_ID))
-
-    // responseToGetCreatedProfile.assertStatus(StatusCodes.OK)
+    responseToGetCreatedProfile.assertStatus(StatusCodes.OK)
   })
 
   test('it should return error (422 UNPROCESSABLE_ENTITY) if the given email is already registered in the database',

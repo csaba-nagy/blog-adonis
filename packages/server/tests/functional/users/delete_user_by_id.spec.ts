@@ -5,7 +5,6 @@ import UserFactory from 'Database/factories/UserFactory'
 import {
   TEST_ADMIN_ID,
   TEST_USER_ID,
-  USER_PROFILE_PATH,
 } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
 import Route from '@ioc:Adonis/Core/Route'
@@ -17,10 +16,8 @@ test.group('DELETE /users/:id', (group) => {
     async ({ client }) => {
       const user = await User.findOrFail(TEST_ADMIN_ID) // 👈 this user fires the delete request
 
-      const { id: targetedUserId } = await UserFactory.with('profile').create() // 👈 this is the user that should be deleted, a.k.a targetedUser
-      const path = Route.makeUrl('users.destroy', { id: targetedUserId })
-
-      const targetedUserProfilePath = `${USER_PROFILE_PATH}/${targetedUserId}` // TODO: it should be refactored as soon as the profile roots are refactored
+      const { id: targetedId } = await UserFactory.with('profile').create() // 👈 this is the user that should be deleted, a.k.a targetedUser
+      const path = Route.makeUrl('users.destroy', { id: targetedId })
 
       const response = await client
         .delete(path)
@@ -29,7 +26,7 @@ test.group('DELETE /users/:id', (group) => {
 
       response.assertStatus(StatusCodes.NO_CONTENT)
 
-      // Testing the deleted user routes 👇
+      // Testing the deleted user route 👇
       const admin = await User.findOrFail(TEST_ADMIN_ID)
 
       const responseToGetDeletedUser = await client
@@ -38,6 +35,9 @@ test.group('DELETE /users/:id', (group) => {
         .loginAs(admin)
 
       responseToGetDeletedUser.assertStatus(StatusCodes.NOT_FOUND)
+
+      // Testing the deleted user profile route 👇
+      const targetedUserProfilePath = Route.makeUrl('profiles.show', { id: targetedId })
 
       const responseToGetDeletedProfile = await client
         .get(targetedUserProfilePath)
@@ -52,7 +52,7 @@ test.group('DELETE /users/:id', (group) => {
       const user = await UserFactory.with('profile').create()
 
       const path = Route.makeUrl('users.destroy', { id: user.id })
-      const profilePath = `${USER_PROFILE_PATH}/${user.id}`
+      const profilePath = Route.makeUrl('profiles.show', { id: user.id })
 
       const response = await client
         .delete(path)
