@@ -1,15 +1,16 @@
 import type { Post, User } from 'App/Models'
-import { POSTS_PATH_PREFIX } from 'Shared/const'
 import type { ApiClient } from '@japa/api-client'
+import Route from '@ioc:Adonis/Core/Route'
 
 export const getAllPost = async (
   client: ApiClient,
   loggedUser: User | null = null,
   nextPageUrl = '/?page=1',
   posts: Post[] = []) => {
+  const path = Route.makeUrl('posts.index')
   const response = !loggedUser
-    ? await client.get(`${POSTS_PATH_PREFIX}${nextPageUrl}`)
-    : await client.get(`${POSTS_PATH_PREFIX}${nextPageUrl}`).loginAs(loggedUser)
+    ? await client.get(`${path}${nextPageUrl}`)
+    : await client.get(`${path}${nextPageUrl}`).loginAs(loggedUser)
 
   const { meta, data } = response.body()
   const { next_page_url } = meta

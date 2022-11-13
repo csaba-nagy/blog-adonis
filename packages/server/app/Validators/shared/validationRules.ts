@@ -1,4 +1,5 @@
 import { rules } from '@ioc:Adonis/Core/Validator'
+import { PostCategory, PostState } from 'App/Enums'
 
 export const userDataValidation = {
   get firstNameRules() {
@@ -52,5 +53,31 @@ export const userProfileValidation = {
       rules.minLength(5),
       rules.maxLength(1000),
     ]
+  },
+}
+
+export const postValidation = {
+  get titleRules() {
+    return [
+      rules.minLength(3),
+      rules.maxLength(100),
+    ]
+  },
+  get categoryRules() {
+    return Object.values(PostCategory)
+  },
+  get descriptionRules() {
+    return [
+      rules.minLength(5),
+      rules.maxLength(500),
+    ]
+  },
+  get bodyRules() {
+    return [
+      rules.minLength(20),
+    ]
+  },
+  get stateRules() {
+    return Object.values(PostState)
   },
 }

@@ -27,7 +27,8 @@ import './routes/profile'
 import './routes/users'
 
 // Global param matchers
-Route.where('id', { match: /^[0-9]+$/, cast: id => Number(id) })
+Route
+  .where('id', { match: /^[0-9]+$/, cast: id => Number(id) })
 
 // check db connection
 Route.get('health', async ({ response }) => {

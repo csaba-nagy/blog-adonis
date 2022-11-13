@@ -10,14 +10,14 @@ import { getAllPost, setTransaction } from 'Tests/helpers'
 test.group('GET /posts', (group) => {
   group.each.setup(setTransaction)
 
-  test('it should return public posts only if the user is not logged in',
+  test('it should return public posts only, if the user is not logged in',
     async ({ client, assert }) => {
       const posts = await getAllPost(client)
 
       posts.forEach(post => assert.strictEqual(post.state, PostState.PUBLIC))
     })
 
-  test('it should return public posts only if the logged user role is USER',
+  test('it should return public posts only, if the logged user role is USER',
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_USER_ID)
 
