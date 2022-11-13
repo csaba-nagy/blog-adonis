@@ -6,6 +6,11 @@ export default class UserProfilesRepository {
   public getUserProfileByUserId = (userId: number, options?: ModelAdapterOptions) =>
     UserProfile.findByOrFail('user_id', userId, options)
 
-  public updateUserProfile = (profile: UserProfile, payload) =>
-    Database.transaction(trx => profile.useTransaction(trx).merge(payload).save())
+  public updateUserProfile = (id: number, payload) => {
+    return Database.transaction(async (trx) => {
+      const profile = await this.getUserProfileByUserId(id, { client: trx })
+
+      return profile.merge(payload).save()
+    })
+  }
 }

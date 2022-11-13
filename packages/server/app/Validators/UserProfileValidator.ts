@@ -1,92 +1,23 @@
 import type { CustomMessages } from '@ioc:Adonis/Core/Validator'
-import { rules, schema } from '@ioc:Adonis/Core/Validator'
+import { schema } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { validationErrorMessages } from './shared/customMessages'
+import { userProfileValidation } from './shared/validationRules'
 
 export default class UserProfileValidator {
   constructor(protected ctx: HttpContextContract) {}
 
-  /*
-   * Define schema to validate the "shape", "type", "formatting" and "integrity" of data.
-   *
-   * For example:
-   * 1. The username must be of data type string. But then also, it should
-   *    not contain special characters or numbers.
-   *    ```
-   *     schema.string({}, [ rules.alpha() ])
-   *    ```
-   *
-   * 2. The email must be of data type string, formatted as a valid
-   *    email. But also, not used by any other user.
-   *    ```
-   *     schema.string({}, [
-   *       rules.email(),
-   *       rules.unique({ table: 'users', column: 'email' }),
-   *     ])
-   *    ```
-   */
   public schema = schema.create({
-    avatarUrl: schema.string.nullableAndOptional({}, []),
-    biography: schema.string.nullableAndOptional({}, [
-      rules.minLength(5),
-      rules.maxLength(1000),
-    ]),
-    websiteUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-      }),
-    ]),
-    facebookUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['facebook.com'],
-      }),
-    ]),
-    twitterUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['twitter.com'],
-      }),
-    ]),
-    instagramUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['instagram.com'],
-      }),
-    ]),
-    youtubeUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['youtube.com'],
-      }),
-    ]),
-    githubUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['github.com'],
-      }),
-    ]),
-    linkedinUrl: schema.string.nullableAndOptional({}, [
-      rules.url({
-        protocols: ['https'],
-        allowedHosts: ['linkedin.com'],
-      }),
-    ]),
+    avatarUrl: schema.string.nullable(),
+    biography: schema.string.nullable(userProfileValidation.biographyRules),
+    websiteUrl: schema.string.nullable(userProfileValidation.getWebsiteUrlRules()),
+    facebookUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['facebook.com'])),
+    twitterUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['twitter.com'])),
+    instagramUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['instagram.com'])),
+    youtubeUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['youtube.com'])),
+    githubUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['github.com'])),
+    linkedinUrl: schema.string.nullable(userProfileValidation.getUrlRulesWithAllowedHosts(['linkedin.com'])),
   })
 
-  /**
-   * Custom messages for validation failures. You can make use of dot notation `(.)`
-   * for targeting nested fields and array expressions `(*)` for targeting all
-   * children of an array. For example:
-   *
-   * {
-   *   'profile.username.required': 'Username is required',
-   *   'scores.*.number': 'Define scores as valid numbers'
-   * }
-   *
-   */
-  public messages: CustomMessages = {
-    'url': 'The given link is invalid. Only https protocol allowed.',
-    'biography.minLength': 'The {{ field }} should be {{ options.minLength }} characters long at least.',
-    'biography.maxLength': '{{ field }} cannot be longer than {{ options.maxLength }} characters.',
-  }
+  public messages: CustomMessages = validationErrorMessages
 }

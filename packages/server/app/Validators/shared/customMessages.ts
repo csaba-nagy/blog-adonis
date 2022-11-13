@@ -18,4 +18,7 @@ export const validationErrorMessages = {
   'email': 'Invalid email format',
   'email.unique': 'Invalid email address',
   'password.regex': 'Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.',
+  'url': 'The given link is invalid. Only https protocol allowed.',
+  'biography.minLength': 'The {{ field }} should be {{ options.minLength }} characters long at least.',
+  'biography.maxLength': '{{ field }} cannot be longer than {{ options.maxLength }} characters.',
 }
