@@ -11,5 +11,5 @@ Route.group(() => Route
     update: ['auth'],
     destroy: ['auth'],
   })
-  .where('slug', /^[a-z0-9_-]+$/))
+  .where('slug', Route.matchers.slug()))
   .prefix(ROUTE_PREFIX)
