@@ -5,14 +5,14 @@ import {
   TEST_AUTHOR_ID,
   TEST_USER_ID,
 } from 'Shared/const'
-import { getAllPost, setTransaction } from 'Tests/helpers'
+import { getAllPosts, setTransaction } from 'Tests/helpers'
 
 test.group('GET /posts', (group) => {
   group.each.setup(setTransaction)
 
   test('it should return public posts only, if the user is not logged in',
     async ({ client, assert }) => {
-      const posts = await getAllPost(client)
+      const posts = await getAllPosts(client)
 
       posts.forEach(post => assert.strictEqual(post.state, PostState.PUBLIC))
     })
@@ -21,7 +21,7 @@ test.group('GET /posts', (group) => {
     async ({ client, assert }) => {
       const user = await User.findOrFail(TEST_USER_ID)
 
-      const posts = await getAllPost(client, user)
+      const posts = await getAllPosts(client, user)
 
       assert.strictEqual(user.role, UserRole.USER)
 
@@ -31,7 +31,7 @@ test.group('GET /posts', (group) => {
   test('it should return all posts of the logged author', async ({ client, assert }) => {
     const author = await User.findOrFail(TEST_AUTHOR_ID)
 
-    const posts = await getAllPost(client, author)
+    const posts = await getAllPosts(client, author)
 
     const { name: authorName } = author.serialize()
 
