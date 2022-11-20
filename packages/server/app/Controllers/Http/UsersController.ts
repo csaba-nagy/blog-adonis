@@ -12,12 +12,15 @@ export default class UsersController {
     return response.created(user.serialize(this.getUserDataSerializationOptions('store')))
   }
 
-  public index = async ({ bouncer, response }: HttpContextContract) => {
+  public index = async ({ bouncer, request, response }: HttpContextContract) => {
     await bouncer.with('UserPolicy').authorize('getAllUsers')
 
-    const users = await this.repository.getUsers()
+    const page = request.input('page', 1)
+    const limit = request.input('limit', 5)
 
-    return response.ok(users.map(user => user.serialize(this.getUserDataSerializationOptions('index'))))
+    const users = await this.repository.getUsers(page, limit)
+
+    return response.ok(users.serialize(this.getUserDataSerializationOptions('index')))
   }
 
   public show = async ({ bouncer, request, response }: HttpContextContract) => {

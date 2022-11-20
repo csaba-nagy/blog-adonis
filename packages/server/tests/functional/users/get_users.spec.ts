@@ -4,22 +4,20 @@ import { User } from 'App/Models'
 import { TEST_ADMIN_ID } from 'Shared/const'
 import { setTransaction } from 'Tests/helpers'
 import Route from '@ioc:Adonis/Core/Route'
+import { getAllUsers } from 'Tests/helpers/getAllUsers'
 
 test.group('GET /users', (group) => {
   group.each.setup(setTransaction)
 
   test('it should return all users if the user is authenticated and authorized (admin only)',
     async ({ client, assert }) => {
-      const user = await User.findOrFail(TEST_ADMIN_ID)
-      const path = Route.makeUrl('users.index')
+      const admin = await User.findOrFail(TEST_ADMIN_ID)
 
       const requiredProperties = ['id', 'email', 'role', 'status', 'profile', 'account', 'name']
 
-      const response = await client.get(path).guard('api').loginAs(user)
+      const users = await getAllUsers(client, admin)
 
-      response.assertStatus(StatusCodes.OK)
-
-      response.body().forEach((user) => {
+      users.forEach((user) => {
         assert.properties(user, requiredProperties)
 
         assert.notProperty(user, 'password')
