@@ -1,2 +1,2 @@
 export * from './setTransaction'
-export * from './getAllPost'
+export * from './getAllPosts'

@@ -2,7 +2,7 @@ import type { Post, User } from 'App/Models'
 import type { ApiClient } from '@japa/api-client'
 import Route from '@ioc:Adonis/Core/Route'
 
-export const getAllPost = async (
+export const getAllPosts = async (
   client: ApiClient,
   loggedUser: User | null = null,
   nextPageUrl = '/?page=1',
@@ -17,5 +17,5 @@ export const getAllPost = async (
 
   posts = [...posts, ...data]
 
-  return !next_page_url ? posts : getAllPost(client, loggedUser, next_page_url, posts)
+  return !next_page_url ? posts : getAllPosts(client, loggedUser, next_page_url, posts)
 }
