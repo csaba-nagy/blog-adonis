@@ -4,7 +4,7 @@ import { UserRole } from 'App/Enums'
 import { User } from 'App/Models'
 
 export default class UsersRepository {
-  public getUsers = () => User.all()
+  public getUsers = (page, limit) => User.query().paginate(page, limit)
 
   public getUserById = (id: number, options?: ModelAdapterOptions) =>
     User.findOrFail(id, options)
